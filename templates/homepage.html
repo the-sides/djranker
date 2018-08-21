@@ -1,0 +1,31 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>HOMEPAGE</title>
+        <link rel="stylesheet" href="{% static 'ranker/css/homepage.css' %}">
+        <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}">
+        <!-- <link href="https://fonts.googleapis.com/css?family=Cantarell|Open+Sans" rel="stylesheet">  -->
+    </head>
+    <body>
+        <div id="header-container">
+            <h1>DJ Queuer</h1>
+        </div>
+        <div id="container">
+            <div id="options-grid">
+
+                <button id="host-btn" class="options">HOST</button>
+                <p>OR</p>
+                <button id="join-btn" class="options">JOIN</button>
+                
+                <p>Host a party</p>
+                <div> <!-- Filler for the grid --> </div>
+                <p>Join to request</p>
+
+            <div id="dropdown-session-input">
+
+            </div>
+
+            </div>
+        </div>
+    </body>
+</html>

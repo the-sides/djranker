@@ -1,0 +1,23 @@
+
+#container{
+    margin: auto;
+    width: 70%;
+    text-align: center;
+}
+#btn-header{
+    margin: 1em 0;
+    background-color:grey;
+}
+#drop-results{
+    display:none;
+    /* The default display. Will reveal on a search */
+    background-color: #4c4c4c;
+    margin: 1em 0;
+}
+th{
+    min-width: 200px;
+    text-align:left;
+}
+tr{
+    background-color: blue
+}

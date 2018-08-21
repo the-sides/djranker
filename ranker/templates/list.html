@@ -1,0 +1,39 @@
+{% load staticfiles %}
+<html lang="en">
+    <head>
+        <title> Ranking List </title>
+        <link rel="stylesheet" href="{% static 'ranker/css/ranklist.css' %}">
+        <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}">
+        <script src="{% static 'ranker/js/jquery-3.3.1.min.js' %}"></script>
+        <script src="{% static 'ranker/js/ranklist.js' %}"></script>
+    </head>
+    <body>
+        <div id="header-container">
+            <h1>DJ Queuer</h1>
+        </div>
+        <div id="container" >
+            <div id="btn-header">
+                <button id="req-btn">SONG REQUEST</button>
+                <input id="search-str"type="text" name="req-search">
+                <button id="hide-results">Hide</button>
+                <button id="authorize">authorize</button>
+                <button id="start-session">Start Session</button>
+            </div>
+            <div id="drop-results">
+                <table id="result-table">
+                    <thead>
+                        <th>Track</th>
+                        <th>Artist</th>
+                        <!-- <th>Album</th> -->
+                        <!-- <th>Duration</th> -->
+                        <th style="width:20px">Request</th>
+                    </thead>
+                    <tbody id="result-body">
+                    <!-- Will fill <tr> tags, <td> with details, and <button> to request  -->
+                    <!-- <tr> has id="track0" index-based track[id] -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
