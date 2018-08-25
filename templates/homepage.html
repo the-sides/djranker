@@ -2,15 +2,19 @@
 <html>
     <head>
         <title>HOMEPAGE</title>
-        <link rel="stylesheet" href="{% static 'ranker/css/homepage.css' %}">
-        <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}">
-        <!-- <link href="https://fonts.googleapis.com/css?family=Cantarell|Open+Sans" rel="stylesheet">  -->
+        <link rel="stylesheet" href="{% static 'ranker/css/homepage.css' %}"/>
+        <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}"/>
+        <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/>
+        <script src="{% static 'ranker/js/jquery-3.3.1.min.js' %}"></script>
+        <script src="{% static 'ranker/js/homepage.js' %}"></script>
+        <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet"/> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
         <div id="header-container">
             <h1>DJ Queuer</h1>
         </div>
-        <div id="container">
+        <div id="content-container">
             <div id="options-grid">
 
                 <button id="host-btn" class="options">HOST</button>
@@ -21,11 +25,21 @@
                 <div> <!-- Filler for the grid --> </div>
                 <p>Join to request</p>
 
-            <div id="dropdown-session-input">
-
+            
             </div>
 
+            <div id="dropdown-session-input" class="row">
+                <div class="input-field col s5">
+                    <input placeholder="Smith House Party" id="party-name" type="text">
+                    <label for="party-name">Party Name</label>
+                </div>
+                <div class="input-field col s5">
+                    <input placeholder="1a2b3c" id="sid-name" type="text">
+                    <label for="sid-name">6 digit identifier</label>
+                </div>
+                <button class="col s2 options" id="start-btn">Start</button>
             </div>
         </div>
+        <script src="{% static 'ranker/js/materialize.js' %}"></script>
     </body>
 </html>

@@ -85,6 +85,7 @@ $(document).ready(function(session){
         searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
         URL = "https://api.spotify.com/v1/search?q=" + searchStr + "&type=track&market=US&limit=10"
         console.log(URL)
+        token = 'BQADj38PJpqHoZt5aXSXPqowSKm2bLKIMTjltPGV4pdf57HG8NS3m7B-C3PS2DbesfTTEdpzdvLMu0DSFsJZXjbKBmT6OHBVJh1xy2WNkqkKFjpjrgHCPKnPVmpsX0K_wr1eMDL27gvxWrCp5xmAoimTH1UUyJOTxS2gsC07EUITIy9P5erCv0r-7Myl96abcDtWSeBQtXet'
         $.ajax({
             method: "GET",
             url: URL ,
