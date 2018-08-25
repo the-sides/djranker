@@ -37,10 +37,13 @@ p{
 .autho{
     display:inline;
 }
-#dropdown-session-input{
-   margin: auto;
-   display: none;
-   width:75%;
+#dropdown-session-options{
+    /* display: none; */
+    margin: auto;
+    width:75%;
+}
+#dropdown-session-options > p {
+    display:inline;
 }
 #start-btn{
     padding: 0.2em 0.1em;

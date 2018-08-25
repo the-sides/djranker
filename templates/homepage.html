@@ -4,10 +4,11 @@
         <title>HOMEPAGE</title>
         <link rel="stylesheet" href="{% static 'ranker/css/homepage.css' %}"/>
         <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}"/>
-        <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/>
+        <!-- <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/> -->
         <script src="{% static 'ranker/js/jquery-3.3.1.min.js' %}"></script>
         <script src="{% static 'ranker/js/homepage.js' %}"></script>
         <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet"/> 
+        <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet"> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
@@ -28,7 +29,12 @@
             
             </div>
 
-            <div id="dropdown-session-input" class="row">
+            <div id="dropdown-session-options" class="row">
+                <p> 1) Authorize the hosting Spotify account: </p>
+                <button> Authorize </button>
+                <br>
+                <p> 2) Choose to start with </p>
+                <button> a copy of a base party playlist </button> <p> or </p> <button> fresh new playlist </button> 
                 <div class="input-field col s5">
                     <input placeholder="Smith House Party" id="party-name" type="text">
                     <label for="party-name">Party Name</label>
