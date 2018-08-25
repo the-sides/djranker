@@ -1,3 +1,9 @@
+/*Consider putting in base.css */
+input{
+    color:white;
+}
+
+
 #options-grid{
     display: grid;
     grid-gap: 50px auto;
@@ -11,6 +17,7 @@
 
 .options{
     max-width: 300px;
+    color: rgb(255, 245, 190);
     padding: 20px 50px;
     font-size: 2em;
     background-color: #555555;
@@ -26,4 +33,17 @@
 }
 p{
     line-height: 50px;
+}
+.autho{
+    display:inline;
+}
+#dropdown-session-input{
+   margin: auto;
+   display: none;
+   width:75%;
+}
+#start-btn{
+    padding: 0.2em 0.1em;
+    max-width: 150px;
+
 }
