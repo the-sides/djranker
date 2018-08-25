@@ -5,8 +5,8 @@ $(document).ready(function(){
         // sid = six-digit identifier or session id
         
         
-        // Open or close dropdown-session-input
-        var dropmenu = $('#dropdown-session-input');
+        // Open or close dropdown-session-options
+        var dropmenu = $('#dropdown-session-options');
         if ( dropmenu.css("display") == "none" ) dropmenu.slideDown(400);
         else dropmenu.slideUp(400);
         
@@ -58,6 +58,9 @@ $(document).ready(function(){
     })
     $('#start-btn').click(function(){
         var ajax_post = {};
+        // Authorize account
+        // Ask baselist or blank
+        //    if bl, print list of users playlists with corresponding buttons. 
         ajax_post['pname'] = $('#party-name').val();
         ajax_post['sid'] = $('#sid-name').val();
         if(ajax_post['pname'] == "" ) {
