@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 class session(models.Model):
+    sid = models.CharField(max_length=6)
     name = models.CharField(max_length=64)
     token = models.CharField(max_length=128)
     playlistURI = models.CharField(max_length=64)
