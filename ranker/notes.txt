@@ -12,3 +12,5 @@ Then as each vote is made, update the track model,
 As requests are made, sticking with a base num of points, they will be present after refreshes
 Requesting a track will lead to an automatic refresh 
 
+Need to find out how django IDs can be stored in other models
+The id = AutoField() is simply and IntegerField and will be treated like such. 

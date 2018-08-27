@@ -54,22 +54,38 @@ $(document).ready(function(){
     })
     $('#start-btn').on('click',function(){
         console.log(getToken());  
-        // Authorize account
-        // Ask baselist or blank
-        //    if bl, print list of users playlists with corresponding buttons. 
-        // ajax_post['pname'] = $('#party-name').val();
-        // ajax_post['sid'] = $('#sid-name').val();
-        // if(ajax_post['pname'] == "" ) {
-        //     window.alert("Enter a party name")
-        // }
-        // else if(ajax_post['sid'].length != 6) {
-        //     window.alert("Pro Tip: Most 6 digit codes are 6 digits in length.");
-        // }
-        // else{
-        //     //Check models for session with existing sid
-        //     console.log(ajax_post['pname'], ajax_post['sid'])
-        // }
-        // Validate entries
+        Authorize account
+        Ask baselist or blank
+           if bl, print list of users playlists with corresponding buttons. 
+        ajax_post['pname'] = $('#party-name').val();
+        ajax_post['sid'] = $('#sid-name').val();
+        if(ajax_post['pname'] == "" ) {
+            window.alert("Enter a party name")
+        }
+        else if(ajax_post['sid'].length != 6) {
+            window.alert("Pro Tip: Most 6 digit codes are 6 digits in length.");
+        }
+        else{
+            //Check models for session with existing sid
+            // Assume sids will be unique FOR NOW                 FIXME
+            $.ajax({
+                method: "POST",
+                url: URL,
+                data:{
+                    'data': JSON.stringify(ajax_post)
+                },
+                success : function(json){
+                    console.log("Session POST sent")
+
+                }
+                error : function(xhr, errmsg, err){
+                    console.log("ERROR: Session POST fail")
+                    
+                }
+            })
+            console.log(ajax_post['pname'], ajax_post['sid'])
+        }
+        Validate entries
 
     })
     $('#join-btn').click(function(){

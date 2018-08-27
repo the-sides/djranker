@@ -7,3 +7,4 @@ def sessionlist(request):
 
 def authorizesession(request,accessCode,state):
     return render(request,'listapproved.html',accessCode,state)
+
