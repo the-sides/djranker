@@ -1,0 +1,14 @@
+Use a bunch of add calls for adding track models, but don't worry about storing them under a session. 
+Just give each request a class to describe the session each model would belong too. 
+If the website is ever scaled, every track will be saved this way, (USE STRONGER ENGLISH) 
+Find tracks sharing a session model id, NOT SID, and sort by the votes. 
+Pass the object through ranklist/sid view 
+THIS REPRESENTS A VOTING TABLE
+
+Then as each vote is made, update the track model, 
+    and link unique votes against particular ip addrs
+    ^ This will need to be LATER IMPLEMENTED, focus on registering clicks accurately first.
+
+As requests are made, sticking with a base num of points, they will be present after refreshes
+Requesting a track will lead to an automatic refresh 
+
