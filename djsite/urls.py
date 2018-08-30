@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # paths for joining sessions
     path('',views.homepage),
-    path('ajax_new_session',views.ajax_new_session)
+    path('ajax_new_session',views.ajax_new_session),
     path('',include('ranker.urls')),
 ]
