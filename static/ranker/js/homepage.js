@@ -54,9 +54,9 @@ $(document).ready(function(){
     })
     $('#start-btn').on('click',function(){
         console.log(getToken());  
-        Authorize account
-        Ask baselist or blank
-           if bl, print list of users playlists with corresponding buttons. 
+        // Authorize account
+        // Ask baselist or blank
+        //    if bl, print list of users playlists with corresponding buttons. 
         ajax_post['pname'] = $('#party-name').val();
         ajax_post['sid'] = $('#sid-name').val();
         if(ajax_post['pname'] == "" ) {
@@ -70,22 +70,22 @@ $(document).ready(function(){
             // Assume sids will be unique FOR NOW                 FIXME
             $.ajax({
                 method: "POST",
-                url: URL,
+                url: 'ajax_new_session',
                 data:{
-                    'data': JSON.stringify(ajax_post)
+                    'data': JSON.stringify(ajax_post),
                 },
                 success : function(json){
                     console.log("Session POST sent")
 
-                }
+                },
                 error : function(xhr, errmsg, err){
                     console.log("ERROR: Session POST fail")
-                    
-                }
+
+                },
             })
             console.log(ajax_post['pname'], ajax_post['sid'])
         }
-        Validate entries
+        // Validate entries
 
     })
     $('#join-btn').click(function(){
