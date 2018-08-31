@@ -1,15 +1,3 @@
-var ajax_post = new Object;
-function getToken(){
-    var codeInd = window.location.href.indexOf("=")
-    var codeEndInd = window.location.href.indexOf("&",codeInd)
-    var token = window.location.href.substring(codeInd+1,codeEndInd)
-    return token;
-}
-function displayResults(){
-    $('#user-playlists').show() // MIGHT NOT WORK
-
-}
-
 // CSRF Token
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
@@ -22,6 +10,59 @@ $.ajaxSetup({
         }
     }
 });
+
+var ajax_post = new Object;
+var offset = 0;
+
+function getToken(){
+    var codeInd = window.location.href.indexOf("=")
+    var codeEndInd = window.location.href.indexOf("&",codeInd)
+    var token = window.location.href.substring(codeInd+1,codeEndInd)
+    return token;
+}
+
+function callPlaylist(offset){
+    if (offset == 0){
+        var URL = "https://api.spotify.com/v1/me/playlists"
+    } else {
+        var URL = "https://api.spotify.com/v1/me/playlists?offset=" + offset
+    }
+    $.ajax({
+        method: "GET",
+        url: URL,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken(),
+        },
+        success : function(json){
+            console.log(json)
+            displayPlaylists(json)
+        },
+        error : function(xhr, errmsg, err) { console.log(xhr.status + ': ' + xhr.responseText); }
+    })
+}
+
+function displayPlaylists(json){
+    // Clear any existing playlist results before showing more
+    // if ( playlistShown() ) { clearPlaylist() }
+
+    // Find what's smaller, the search limit or the amount of playlists user holds.
+    var n = json.limit
+    if (n > json.total) { n = json.total }
+    for (var i = 0; i < n ; i++){
+        playlist = json.items[i]
+        $('#playlist-body').append("<tr></tr>")
+        cell = $('tr:last')
+        cell.append("<td>"+playlist.name+"</td>")
+        cell.append("<td>"+playlist.tracks.total+"</td>")
+        cell.append("<td><button id='queue"+i+"'>QUEUE</button></td>")
+        // The button will request details corresponding to the <tr> parent
+        cell.addClass("result").attr("id","playlist"+i)
+        console.log(playlist.name, " - ", playlist.tracks.total)
+    }
+}
+
 
 $(document).ready(function(){
     
@@ -66,6 +107,15 @@ $(document).ready(function(){
 
 
     })
+    
+    $('.playlist-btn').click(function(){
+        callPlaylist(offset)
+        offset += 20
+    })
+
+
+
+
     $('#start-btn').on('click',function(){
         console.log(getToken());  
         // Authorize account
