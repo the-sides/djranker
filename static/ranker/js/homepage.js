@@ -21,6 +21,12 @@ function getToken(){
     return token;
 }
 
+function dropdown(str){
+    var dropmenu = $('#'+str);
+    if ( dropmenu.css("display") == "none" ) dropmenu.slideDown(400);
+    else dropmenu.slideUp(400);
+}
+
 function callPlaylist(offset){
     var URL = "https://api.spotify.com/v1/me/playlists"
     if (offset !== 0){
@@ -45,7 +51,7 @@ function callPlaylist(offset){
 function displayPlaylists(json){
     // Clear any existing playlist results before showing more
     // if ( playlistShown() ) { clearPlaylist() }
-
+    dropdown('user-playlists')
     // Find what's smaller, the search limit or the amount of playlists user holds.
     var n = json.limit
     if (n > json.total) { n = json.total }
@@ -69,9 +75,7 @@ $(document).ready(function(){
      
         
         // Open or close dropdown-session-options
-        var dropmenu = $('#dropdown-session-options');
-        if ( dropmenu.css("display") == "none" ) dropmenu.slideDown(400);
-        else dropmenu.slideUp(400);
+        dropdown("dropdown-session-options")
                 
     })
 
@@ -105,7 +109,7 @@ $(document).ready(function(){
         //   followed through, I can refresh the access codes amongst the active user-base
         // Any ways, with the access code saved, I can redirect the user right after activation
         //   to another page with a cleaner url.
-        
+
 
     })
     
@@ -114,6 +118,9 @@ $(document).ready(function(){
         offset += 20
     })
 
+    $('#blanklist-btn').click(function(){
+        $('#user-playlists').slideUp(200)
+    })
 
 
 
