@@ -69,8 +69,15 @@ function displayPlaylists(json){
     }
 }
 
-function newPlaylist(baselistURI=""){
-    print(baselistURI)
+function newPlaylist(baselistURI="NA"){
+    if(baselistURI == "NA"){
+        // New blank playlist
+        var ptitle = "DJRanker: " + ajax_post['pname']
+    }
+    else{
+        // Duplicate baselist
+        var ptitle = "DJRanker: " // The rest appened after playlist parsed
+    }
 }
 
 $(document).ready(function(){
