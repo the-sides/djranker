@@ -12,6 +12,7 @@ $.ajaxSetup({
 });
 
 var ajax_post = new Object;
+    ajax_post['puri'] = ""
 var offset = 0;
 
 function getToken(){
@@ -68,6 +69,9 @@ function displayPlaylists(json){
     }
 }
 
+function newPlaylist(baselistURI=""){
+    print(baselistURI)
+}
 
 $(document).ready(function(){
     
@@ -131,12 +135,31 @@ $(document).ready(function(){
         //    if bl, print list of users playlists with corresponding buttons. 
         ajax_post['pname'] = $('#party-name').val();
         ajax_post['sid'] = $('#sid-name').val();
+
+            // FIELD VALIDATION 
         if(ajax_post['pname'] == "" ) {
             window.alert("Enter a party name")
         }
         else if(ajax_post['sid'].length != 6) {
             window.alert("Pro Tip: Most 6 digit codes are 6 digits in length.");
         }
+        else if(ajax_post['puri'] == ""){
+            // A playlist state hasn't been picked
+            window.alert("Choose a playlist mode")
+        }
+        else if(ajax_post['puri'] == "choose"){
+            // Using a base playlist which hasn't been choosen yet
+
+        }
+        else if(ajax_post['puri'] == "new"){
+            // Make new playlist, update ajax[puri] with the new playlist URI
+        }
+        else if(ajax_post['puri'].substring(0,7) == "spotify"){
+            // Base playlist has been picked, make a new one with the same contents
+            // Save new uri as ajax[puri]
+        }
+        
+            // LAUNCH IF NO STOPS
         else{
             //Check models for session with existing sid
             // Assume sids will be unique FOR NOW                 FIXME

@@ -38,13 +38,27 @@
             </div>
 
             <div id="dropdown-session-options" class="row">
+                
                 <p> 1) Authorize the hosting Spotify account: </p>
                 <button id="autho-btn"> Authorize </button>
                 <br>
-                <p> 2) Choose to start with </p>
+                <p> 2) Set party name and the link for guests</p>
+                <br>
+                <div class="input-field col s5">
+                    <input placeholder="Smith House Party" id="party-name" type="text">
+                    <label for="party-name">Party Name</label>
+                </div>
+                <div class="input-field col s5">
+                    <input placeholder="1a2b3c" id="sid-name" type="text">
+                    <label for="sid-name">6 digit identifier</label>
+                </div>
+                <br>
+
+                <p> 3) Choose to start with </p>
                 <button class="playlist-btn"> a copy of a base party playlist </button>
                     <p> or </p> 
                 <button id="blanklist-btn"> fresh new playlist </button> 
+                
                 <div id='user-playlists'>
                     <table>
                         <thead>
@@ -56,15 +70,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="input-field col s5">
-                    <input placeholder="Smith House Party" id="party-name" type="text">
-                    <label for="party-name">Party Name</label>
-                </div>
-                <div class="input-field col s5">
-                    <input placeholder="1a2b3c" id="sid-name" type="text">
-                    <label for="sid-name">6 digit identifier</label>
-                </div>
+
                 <button class="col s2 options" id="start-btn">Start</button>
+
             </div>
         </div>
         <script src="{% static 'ranker/js/materialize.js' %}"></script>
