@@ -16,13 +16,10 @@ def ajax_new_session(request):
 
         try:
             sesh = session()
-            print("sesh made")
             ajax_data = json.loads(request.POST.get('data')) # json.loads allow data to be a stringified json
-            # ajax_data = request.POST.get('data')
-            print("ajax data", ajax_data['sid'])
             sesh.sid = ajax_data['sid']
             sesh.name = ajax_data['pname']
-            # sesh.token = ajax_data['token']
+            sesh.token = ajax_data['token']
             # sesh.playlist_uri = ajax_data['PURI']
 
             sesh.save()
