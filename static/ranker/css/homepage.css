@@ -34,7 +34,9 @@ table{
     margin:auto;
     text-align: center
 }
-
+.input-field{
+    display:inline;
+}
 input{
     margin-bottom: 1em ;
 }
