@@ -22,10 +22,9 @@ function getToken(){
 }
 
 function callPlaylist(offset){
-    if (offset == 0){
-        var URL = "https://api.spotify.com/v1/me/playlists"
-    } else {
-        var URL = "https://api.spotify.com/v1/me/playlists?offset=" + offset
+    var URL = "https://api.spotify.com/v1/me/playlists"
+    if (offset !== 0){
+        URL = URL + "?offset=" + offset
     }
     $.ajax({
         method: "GET",
@@ -67,10 +66,7 @@ function displayPlaylists(json){
 $(document).ready(function(){
     
     $('#host-btn').click(function(){
-        // Prep to make new session model.
-        // Authorize user to obtain access code at the end, redirecting to ranklist with sid
-        // sid = six-digit identifier or session id
-        
+     
         
         // Open or close dropdown-session-options
         var dropmenu = $('#dropdown-session-options');
@@ -97,14 +93,19 @@ $(document).ready(function(){
         //playlist-read-private         to make new duplicate from old baselist content
         
         //   RUN-TIME
-        //playlist-modify-public        new playlist will be public while munipulating
+        //playlist-modify-public        new playlist will be public while manipulating
         //user-read-currently-playing   for UI presentation
-        //user-read-playback-state      for evaluating urgency
+        //user-read-playback-state      for timing playlist shifts.
 
         window.location.href = "https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123"
 
         // As the redirected url will contain the access code, href will return token with getToken(), so start listing playlists
-
+        // To scale, if I'm about to run a global timer on how long an object exists, 
+        //  I could create the model the moment of authorization. If the session isn't
+        //   followed through, I can refresh the access codes amongst the active user-base
+        // Any ways, with the access code saved, I can redirect the user right after activation
+        //   to another page with a cleaner url.
+        
 
     })
     
