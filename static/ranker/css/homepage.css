@@ -27,7 +27,9 @@
 .options:active{
     border: 3px solid black;
 }
-
+#user-playlists{
+    display:none;
+}
 table{
     margin:auto;
     text-align: center
