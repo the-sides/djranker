@@ -103,15 +103,12 @@ $(document).ready(function(){
 
     })
     $('#join-btn').click(function(){
-        ajax_post['pname'] = $('#party-name').val();
-        ajax_post['sid'] = $('#sid-name').val();
-        console.log(JSON.stringify(ajax_post))
-        // // Prompt for 6-digit unique key
-        // var sid = window.prompt("What is the party's unique 6 digit code?")
-        // // Redirect to ranklist
-        // if ( sid.length == 6){
-        //     window.location.href = "127.0.0.1:8000/link/" + sid;
-        // }
-        // else console.log("need 6 digit key");
+        // Prompt for 6-digit unique key
+        var sid = window.prompt("What is the party's unique 6 digit code?")
+        // Redirect to ranklist
+        if ( sid.length == 6){
+            window.location.href = "127.0.0.1:8000/link/" + sid;
+        }
+        else console.log("need 6 digit key");
     })
 })
