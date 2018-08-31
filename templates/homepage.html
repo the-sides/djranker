@@ -21,7 +21,7 @@
     </head>
     <body>
         <div id="header-container">
-            <h1>DJ Queuer</h1>
+            <h1>DJ Ranker</h1>
         </div>
         <div id="content-container">
             <div id="options-grid">
@@ -42,18 +42,15 @@
                 <button id="autho-btn"> Authorize </button>
                 <br>
                 <p> 2) Choose to start with </p>
-                <button> a copy of a base party playlist </button> <p> or </p> <button> fresh new playlist </button> 
+                <button class="playlist-btn"> a copy of a base party playlist </button> <p> or </p> <button> fresh new playlist </button> 
                 <div id='user-playlists'>
                     <table>
                         <thead>
                             <th>Playlist name</th>
-                            <th>Song count ***ADD JQUERY FILL AFTER AJAX CALL***</th>
-                            <th></th>
+                            <th>Song count</th>
+                            <th> </th>
                         </thead>
                         <tbody id='playlist-body'>
-                            <tr>
-                                <td>track</td><td>number</td><td><button>choose</button></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
