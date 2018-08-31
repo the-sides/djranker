@@ -7,6 +7,13 @@
         <!-- <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/> -->
         <script src="{% static 'ranker/js/jquery-3.3.1.min.js' %}"></script>
         <script src="{% static 'ranker/js/homepage.js' %}"></script>
+
+        {% csrf_token %}
+        <script type="text/javascript">
+        // using jQuery
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        </script>
+
         <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet"/> 
         <!-- <link href="https://fonts.googleapis.com/css?family=Play|Rajdhani|Sarpanch|VT323" rel="stylesheet">  -->
         <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet"> 
