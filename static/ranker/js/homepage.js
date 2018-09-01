@@ -13,6 +13,7 @@ $.ajaxSetup({
 
 var ajax_post = new Object;
     ajax_post['puri'] = ""
+var playlist_json = new Object;
 var offset = 0;
 
 function getToken(){
@@ -29,10 +30,13 @@ function dropdown(str){
 }
 
 function callPlaylist(offset){
+    // Show only 20 results, remove old
+    
     var URL = "https://api.spotify.com/v1/me/playlists"
     if (offset !== 0){
         URL = URL + "?offset=" + offset
     }
+
     $.ajax({
         method: "GET",
         url: URL,
@@ -43,7 +47,8 @@ function callPlaylist(offset){
         },
         success : function(json){
             console.log(json)
-            displayPlaylists(json)
+            playlist_json = json
+            displayPlaylists(playlist_json)
         },
         error : function(xhr, errmsg, err) { console.log(xhr.status + ': ' + xhr.responseText); }
     })
@@ -53,9 +58,11 @@ function displayPlaylists(json){
     // Clear any existing playlist results before showing more
     // if ( playlistShown() ) { clearPlaylist() }
     dropdown('user-playlists')
+    
     // Find what's smaller, the search limit or the amount of playlists user holds.
     var n = json.limit
     if (n > json.total) { n = json.total }
+
     for (var i = 0; i < n ; i++){
         playlist = json.items[i]
         $('#playlist-body').append("<tr></tr>")
