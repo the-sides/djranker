@@ -72,15 +72,59 @@ function fillPlaylists(json){
     }
 }
 
-function newPlaylist(baselistURI="NA"){
-    if(baselistURI == "NA"){
-        // New blank playlist
-        var ptitle = "DJRanker: " + ajax_post['pname']
-    }
-    else{
-        // Duplicate baselist
-        var ptitle = "DJRanker: " // The rest appened after playlist parsed
-    }
+function newPlaylist(){
+
+    $.ajax({
+        method: "POST",
+        url: "https://api.spotify.com/v1/users/the_sides/playlists",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken()
+        },
+        data:JSON.stringify({
+            "name":"DJRanker: "+ ajax_post['pname'],
+            "description" :"DJRanker made this playlists, containing all the songs played for this session.",
+            "public" : true
+        }),
+        success: function(json){
+            console.log(json.id)
+            ajax_post['puri'] = json.id
+            launchSession()
+        },
+        error : function(xhr, errmsg, err,json){
+            console.log(xhr.status + ': ' + xhr.responseText)
+        }
+    })
+    // if(baselistURI == "NA"){
+    //     // New blank playlist
+    //     var ptitle = "DJRanker: " + ajax_post['pname']
+    // }
+    // else{
+    //     // Duplicate baselist
+    //     var ptitle = "DJRanker: " // The rest appened after playlist parsed
+    // }
+}
+
+function launchSession(){
+    
+    console.log("From Launch:", ajax_post['puri'])
+    // Create session model
+    // $.ajax({
+    //     method: "POST",
+    //     url: 'ajax_new_session',
+    //     data:{
+    //         data: JSON.stringify(ajax_post),
+    //     },
+    //     success : function(){
+    //         console.log("Session POST sent")
+            
+    //     },
+    //     error : function(xhr, errmsg, err,json){
+    //         console.log(xhr.status + ': ' + xhr.responseText)
+            
+    //     }
+    // })
 }
 
 $(document).ready(function(){
@@ -174,75 +218,30 @@ $(document).ready(function(){
         ajax_post['sid'] = $('#sid-name').val();
 
             // FIELD VALIDATION 
-        // if(ajax_post['pname'] == "" ) {
-        //     window.alert("Enter a party name")
-        // }
-        // else if(ajax_post['sid'].length != 6) {
-        //     window.alert("Pro Tip: Most 6 digit codes are 6 digits in length.");
-        // }
-        // else if(ajax_post['puri'] == ""){
-        //     // A playlist state hasn't been picked
-        //     window.alert("Choose a playlist mode")
-        // }
-        // else if(ajax_post['puri'] == "choose"){
-        //     // Using a base playlist which hasn't been choosen yet
+        if(ajax_post['pname'] == "" ) {
+            window.alert("Enter a party name")
+        }
+        else if(ajax_post['sid'].length != 6) {
+            window.alert("Pro Tip: Most 6 digit codes are 6 digits in length.");
+        }
+        else if(ajax_post['puri'] == ""){
+            // A playlist state hasn't been picked
+            window.alert("Choose a playlist mode")
+        }
+        else if(ajax_post['puri'] == "choose"){
+            // Using a base playlist which hasn't been choosen yet
 
-        // }
-        // else if(ajax_post['puri'] == "new"){
-        //     // Make new playlist, update ajax[puri] with the new playlist URI
-        // }
-        // else if(ajax_post['puri'].substring(0,7) == "spotify"){
-        //     // Base playlist has been picked, make a new one with the same contents
-        //     // Save new uri as ajax[puri]
-        // }
-        
-        //     // LAUNCH IF NO STOPS
-        // else{
-        //     // launchSession(ajax_post);
-        //     // Check models for session with existing sid
-        //     // FIXME: Assume sids will be unique FOR NOW 
+        }        
+            // LAUNCH IF NO STOPS
+        else{
+            newPlaylist();
+            // Check models for session with existing sid
+            // FIXME: Assume sids will be unique FOR NOW 
 
         //     // Create new playlist
-            
-        //     // Create session model
-        //     $.ajax({
-        //         method: "POST",
-        //         url: 'ajax_new_session',
-        //         data:{
-        //             data: JSON.stringify(ajax_post),
-        //         },
-        //         success : function(){
-        //             console.log("Session POST sent")
-                    
-        //         },
-        //         error : function(xhr, errmsg, err,json){
-        //             console.log(xhr.status + ': ' + xhr.responseText)
-                    
-        //         }
-        //     })
-        //     console.log(ajax_post['pname'], ajax_post['sid'])
-        // }
-        $.ajax({
-            method: "POST",
-            url: "https://api.spotify.com/v1/users/the_sides/playlists",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + getToken()
-            },
-            data:JSON.stringify({
-                "name":"DJRanker: "+ ajax_post['pname'],
-                "description" :"DJRanker made this playlists, containing all the songs played for this session.",
-                "public" : true
-            }),
-            success: function(){
-                console.log("Check spotify you bad ass")
-            },
-            error : function(xhr, errmsg, err,json){
-                console.log(xhr.status + ': ' + xhr.responseText)
-            }
-        })
-        // Validate entries
+
+            console.log(ajax_post['pname'], ajax_post['sid'])
+        }
 
     })
     $('#join-btn').click(function(){
