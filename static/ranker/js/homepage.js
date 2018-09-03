@@ -135,9 +135,11 @@ $(document).ready(function(){
         if(!$('.result').length){
             callPlaylist(offset)
         }
+        // State maintanance
         if(ajax_post['puri'].substring(0,7) !== ""){
             ajax_post['puri'] = "choose"
         }
+        $('#pstatus').text("YOUR PLAYLIST")
     })
 
     // Navigation buttons
@@ -147,13 +149,17 @@ $(document).ready(function(){
         callPlaylist(offset)
     })
     $('#next-playlists').click(function(){
+        // FIXME Check for limit, otherwise offset will go further out of bounds
         offset += 20
         callPlaylist(offset)
     })
 
     $('#blanklist-btn').click(function(){
         $('#user-playlists').slideUp(200)
+
+        // State maintanance 
         ajax_post['puri'] = "new"
+        $('#pstatus').text("EMPTY PLAYLIST")
     })
 
 
