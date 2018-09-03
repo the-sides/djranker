@@ -43,6 +43,9 @@ table{
 .input-field{
     display:inline;
 }
+label{
+    margin-left: 2em;
+}
 input{
     margin-bottom: 1em ;
 }
