@@ -210,11 +210,17 @@ $(document).ready(function(){
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                 },
-                success: function(){
-
+                data:{
+                    "name":"FIRST EVER DJ PLAYLIST",
+                    "description" :"DJRanker made this playlists, containing all the songs played for this session.",
+                    "public" : true
                 },
-                error : function(){
-                    
+                success: function(){
+                    console.log("Check spotify you bad ass")
+                },
+                error : function(xhr, errmsg, err,json){
+                    console.log(xhr.status + ': ' + xhr.responseText)
+
                 }
             })
 
@@ -232,7 +238,7 @@ $(document).ready(function(){
                 error : function(xhr, errmsg, err,json){
                     console.log(xhr.status + ': ' + xhr.responseText)
 
-                },
+                }
             })
             console.log(ajax_post['pname'], ajax_post['sid'])
         }
