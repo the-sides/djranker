@@ -175,15 +175,35 @@ $(document).ready(function(){
         
             // LAUNCH IF NO STOPS
         else{
-            //Check models for session with existing sid
-            // Assume sids will be unique FOR NOW                 FIXME
+            // launchSession(ajax_post);
+            // Check models for session with existing sid
+            // FIXME: Assume sids will be unique FOR NOW 
+
+            // Create new playlist
+            $.ajax({
+                method: "POST",
+                url: "https://api.spotify.com/v1/playlists",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function(){
+
+                },
+                error : function(){
+                    
+                }
+            })
+
+            // Create session model
             $.ajax({
                 method: "POST",
                 url: 'ajax_new_session',
                 data:{
                     data: JSON.stringify(ajax_post),
                 },
-                success : function(json){
+                success : function(){
                     console.log("Session POST sent")
 
                 },
