@@ -1,3 +1,4 @@
+
 #options-grid{
     display: grid;
     grid-gap: 50px auto;
@@ -26,6 +27,11 @@
 
 .options:active{
     border: 3px solid black;
+}
+#content-container{
+    min-width: 540px;
+    width: 70%;
+    margin: auto;
 }
 #user-playlists{
     display:none;
@@ -60,7 +66,18 @@ p{
 }
 
 #start-btn{
+    margin: 2em 0;
     padding: 0.2em 0.1em;
     max-width: 150px;
+    float: right;
+}
 
+#prev-playlists #next-playlists{
+    display:inline;
+}
+#prev-playlists{
+    float:left;
+}
+#next-playlists{
+    float: right;
 }

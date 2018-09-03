@@ -24,6 +24,7 @@ function getToken(){
 }
 
 function callPlaylist(offset){
+    console.log("callPlaylist",offset)
     // Show only 20 results, remove old
     
     var URL = "https://api.spotify.com/v1/me/playlists"
@@ -41,17 +42,18 @@ function callPlaylist(offset){
         },
         success : function(json){
             console.log(json)
+            // Later implementation
+            fillPlaylists(json)
             playlist_json = json
-            displayPlaylists(playlist_json)
         },
         error : function(xhr, errmsg, err) { console.log(xhr.status + ': ' + xhr.responseText); }
     })
 }
 
-function displayPlaylists(json){
+function fillPlaylists(json){
     // Clear any existing playlist results before showing more
-    // if ( playlistShown() ) { clearPlaylist() }
-    $('#user-playlists').slideToggle(400)
+    $( '.result' ).remove();
+    // $('#user-playlists').slideToggle(400)
     
     // Find what's smaller, the search limit or the amount of playlists user holds.
     var n = json.limit
@@ -126,16 +128,32 @@ $(document).ready(function(){
     })
     
     $('#playlist-btn').click(function(){
+        
         $('#user-playlists').slideDown(200)
-        if(playlist_json == {}){
-            //
+        
+        // If the results have been pressed on a previous click, don't bother again.
+        if(!$('.result').length){
             callPlaylist(offset)
-            offset += 20
         }
+        if(ajax_post['puri'].substring(0,7) !== ""){
+            ajax_post['puri'] = "choose"
+        }
+    })
+
+    // Navigation buttons
+    $('#prev-playlists').click(function(){
+        if(offset == 0) return;
+        offset -= 20 
+        callPlaylist(offset)
+    })
+    $('#next-playlists').click(function(){
+        offset += 20
+        callPlaylist(offset)
     })
 
     $('#blanklist-btn').click(function(){
         $('#user-playlists').slideUp(200)
+        ajax_post['puri'] = "new"
     })
 
 
