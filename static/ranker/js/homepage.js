@@ -23,12 +23,6 @@ function getToken(){
     return token;
 }
 
-function dropdown(str){
-    var dropmenu = $('#'+str);
-    if ( dropmenu.css("display") == "none" ) dropmenu.slideDown(400);
-    else dropmenu.slideUp(400);
-}
-
 function callPlaylist(offset){
     // Show only 20 results, remove old
     
@@ -57,7 +51,7 @@ function callPlaylist(offset){
 function displayPlaylists(json){
     // Clear any existing playlist results before showing more
     // if ( playlistShown() ) { clearPlaylist() }
-    dropdown('user-playlists')
+    $('#user-playlists').slideToggle(400)
     
     // Find what's smaller, the search limit or the amount of playlists user holds.
     var n = json.limit
@@ -93,7 +87,7 @@ $(document).ready(function(){
      
         
         // Open or close dropdown-session-options
-        dropdown("dropdown-session-options")
+        $("#dropdown-session-options").slideToggle(400)
                 
     })
 
@@ -131,9 +125,13 @@ $(document).ready(function(){
 
     })
     
-    $('.playlist-btn').click(function(){
-        callPlaylist(offset)
-        offset += 20
+    $('#playlist-btn').click(function(){
+        $('#user-playlists').slideDown(200)
+        if(playlist_json == {}){
+            //
+            callPlaylist(offset)
+            offset += 20
+        }
     })
 
     $('#blanklist-btn').click(function(){
