@@ -20,7 +20,7 @@ def ajax_new_session(request):
             sesh.sid = ajax_data['sid']
             sesh.name = ajax_data['pname']
             sesh.token = ajax_data['token']
-            # sesh.playlist_uri = ajax_data['PURI']
+            sesh.pid = ajax_data['PURI']
 
             sesh.save()
             response_data['result'] = True

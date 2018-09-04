@@ -6,7 +6,7 @@ class session(models.Model):
                                          # sid is used for link navigation and can be user specified
     name = models.CharField(max_length=64,default="error: unnamed")
     token = models.CharField(max_length=207,default="no token")
-    playlist_uri = models.CharField(max_length=22, default="bro idk")
+    pid = models.CharField(max_length=22, default="bro idk")
     # track_list # Table for holding URIs, track names, artist, album img link, and VOTES
     # psych bitch, I'm using a db full of track models instead, each with a sid id.
 
