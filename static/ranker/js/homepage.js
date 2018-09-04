@@ -13,7 +13,8 @@ $.ajaxSetup({
 
 var rootURL = "http://localhost:8000/list/"
 var ajax_post = new Object;
-    // ajax_post['puri'] = ""
+    ajax_post['puri'] = ""
+    // If something goes wrong, it's bc I uncommented the above
 var playlist_json = new Object;
 var offset = 0;
 
@@ -176,12 +177,29 @@ $(document).ready(function(){
             callPlaylist(offset)
         }
         // State maintanance
-        if(ajax_post['puri'].substring(0,7) !== ""){
+        if(ajax_post['puri'].length !== 22){
+        // Don't state that you are about to choose if you already picked playlist
+        // Prevents user from picking, clicking fresh, then going back to picked. 
             ajax_post['puri'] = "choose"
         }
         $('#pstatus').text("YOUR PLAYLIST")
     })
     
+
+    // Playlist Selection buttons
+    //     because buttons do not exist when the doc is loaded, must attach 
+    //     a listener to pre-existing where anything new might have been created
+    $('#user-playlists').on('click', '.result',function(){
+        // which playlist was clicked?
+        var i = parseInt($(this).attr('id')[8])
+        console.log("i:", i)
+        console.log(playlist_json)
+        // oh it was i? huh, well use that index and give is to the playlist_json
+        console.log(playlist_json.items[i].id.length)
+        ajax_post['puri'] = playlist_json.items[i].id
+
+    })
+
     // Navigation buttons
     $('#prev-playlists').click(function(){
         if(offset == 0) return;
