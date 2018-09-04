@@ -20,14 +20,14 @@ def ajax_new_session(request):
             sesh.sid = ajax_data['sid']
             sesh.name = ajax_data['pname']
             sesh.token = ajax_data['token']
-            sesh.pid = ajax_data['PURI']
+            sesh.pid = ajax_data['puri']
 
             sesh.save()
             response_data['result'] = True
 
             # Validator
             status = session.objects.get(sid=ajax_data['sid'])
-            print(status)
+            print(status.name)
             print(response_data)
 
         except Exception as error: print(error)
