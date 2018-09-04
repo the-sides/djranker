@@ -11,8 +11,9 @@ $.ajaxSetup({
     }
 });
 
+var rootURL = "http://localhost:8000/list/"
 var ajax_post = new Object;
-    ajax_post['puri'] = ""
+    // ajax_post['puri'] = ""
 var playlist_json = new Object;
 var offset = 0;
 
@@ -20,12 +21,16 @@ function getToken(){
     var codeInd = window.location.href.indexOf("=")
     var codeEndInd = window.location.href.indexOf("&",codeInd)
     var token = window.location.href.substring(codeInd+1,codeEndInd)
+    if (token.length !== 207) { return -1 }
     return token;
+}
+function savePURI(id){
+    window.ajax_post['puri'] = id;
+    return ajax_post;
 }
 
 function callPlaylist(offset){
-    console.log("callPlaylist",offset)
-    // Show only 20 results, remove old
+    console.log("Playlist list offset: ",offset)
     
     var URL = "https://api.spotify.com/v1/me/playlists"
     if (offset !== 0){
@@ -53,7 +58,6 @@ function callPlaylist(offset){
 function fillPlaylists(json){
     // Clear any existing playlist results before showing more
     $( '.result' ).remove();
-    // $('#user-playlists').slideToggle(400)
     
     // Find what's smaller, the search limit or the amount of playlists user holds.
     var n = json.limit
@@ -73,7 +77,6 @@ function fillPlaylists(json){
 }
 
 function newPlaylist(){
-
     $.ajax({
         method: "POST",
         url: "https://api.spotify.com/v1/users/the_sides/playlists",
@@ -89,54 +92,43 @@ function newPlaylist(){
         }),
         success: function(json){
             console.log(json.id)
-            ajax_post['puri'] = json.id
+            window.ajax_post['puri'] = json.id
+            console.log("New playlist made: ", ajax_post['puri'], ajax_post['puri'].length)
             launchSession()
         },
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
         }
     })
-    // if(baselistURI == "NA"){
-    //     // New blank playlist
-    //     var ptitle = "DJRanker: " + ajax_post['pname']
-    // }
-    // else{
-    //     // Duplicate baselist
-    //     var ptitle = "DJRanker: " // The rest appened after playlist parsed
-    // }
 }
 
 function launchSession(){
     
-    console.log("From Launch:", ajax_post['puri'])
+    console.log("Playlist saved in database:", ajax_post['puri'])
     // Create session model
-    // $.ajax({
-    //     method: "POST",
-    //     url: 'ajax_new_session',
-    //     data:{
-    //         data: JSON.stringify(ajax_post),
-    //     },
-    //     success : function(){
-    //         console.log("Session POST sent")
+    $.ajax({
+        method: "POST",
+        url: 'ajax_new_session',
+        data:{
+            data: JSON.stringify(ajax_post),
+        },
+        success : function(){
+            console.log("Session POST sent", ajax_post)
+            window.location.href(rootURL + ajax_post['sid'])
+        },
+        error : function(xhr, errmsg, err,json){
+            console.log(xhr.status + ': ' + xhr.responseText)
             
-    //     },
-    //     error : function(xhr, errmsg, err,json){
-    //         console.log(xhr.status + ': ' + xhr.responseText)
-            
-    //     }
-    // })
+        }
+    })
 }
 
 $(document).ready(function(){
     
     $('#host-btn').click(function(){
-     
-        
         // Open or close dropdown-session-options
         $("#dropdown-session-options").slideToggle(400)
-                
     })
-
 
     $('#autho-btn').click(function(){
         ///////////////////////////////
@@ -167,12 +159,16 @@ $(document).ready(function(){
         //   followed through, I can refresh the access codes amongst the active user-base
         // Any ways, with the access code saved, I can redirect the user right after activation
         //   to another page with a cleaner url.
-
+        console.log(getToken())
 
     })
     
     $('#playlist-btn').click(function(){
-        
+        if (getToken() == -1){
+            window.alert("Authorize your Spotify account first, silly goose");
+            return -1;
+        }
+
         $('#user-playlists').slideDown(200)
         
         // If the results have been pressed on a previous click, don't bother again.
@@ -213,7 +209,7 @@ $(document).ready(function(){
         // Authorize account
         // Ask baselist or blank
         //    if bl, print list of users playlists with corresponding buttons. 
-        token = 
+
         ajax_post['pname'] = $('#party-name').val();
         ajax_post['sid'] = $('#sid-name').val();
 
@@ -234,11 +230,12 @@ $(document).ready(function(){
         }        
             // LAUNCH IF NO STOPS
         else{
-            newPlaylist();
+            newPlaylist()
+            // Within newPlaylist(), launchSession() will be called with ajax success
+
             // Check models for session with existing sid
             // FIXME: Assume sids will be unique FOR NOW 
 
-        //     // Create new playlist
 
             console.log(ajax_post['pname'], ajax_post['sid'])
         }
