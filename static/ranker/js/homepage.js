@@ -114,7 +114,7 @@ function launchSession(){
         },
         success : function(){
             console.log("Session POST sent", ajax_post)
-            window.location.href(rootURL + ajax_post['sid'])
+            window.location.href = rootURL + ajax_post['sid']
         },
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
@@ -181,7 +181,7 @@ $(document).ready(function(){
         }
         $('#pstatus').text("YOUR PLAYLIST")
     })
-
+    
     // Navigation buttons
     $('#prev-playlists').click(function(){
         if(offset == 0) return;

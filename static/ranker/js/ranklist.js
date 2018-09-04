@@ -6,7 +6,17 @@
 //     console.log(session.token
 // }
 
+function updateRanklist(){
+    // Ajax GET for all tracks w/ matching sid
+    // Display list in order
+    // 
+}
+
 $(document).ready(function(session){ 
+    // Upon launch, 
+    // updateRanklist()
+
+
     var results = {};
     // Results are accessable globally
     // Search process functions
@@ -85,7 +95,7 @@ $(document).ready(function(session){
         searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
         URL = "https://api.spotify.com/v1/search?q=" + searchStr + "&type=track&market=US&limit=10"
         console.log(URL)
-        token = 'BQB-y-YCBBpXxTr9iaCBSN4Br34a3zpS_U3cFhtWXEGrKDypRRFsKVsFAP_2enQJdrnMl9rQMjhTbtFCEZjDlsEnOzPj3_6SWDOOhAfEnI7LkfTzyWcl5HaE09rnoPgZwF1xSlwvaV2ndUoT5qcJAQ3EQy3NO1uNZtcx0LmD1tD1dP-B0d04nB0hbGi8sr1rN-QVr-Fie1-tagU'
+        token = 'BQB-y-YCBBpXxTr9iaCBSN4Br34a3zpS_U3cFhtWXEGrKDypRRFsKVsFAP_2enQJdrnMl9rQMjhTbtFCEZjDlsEnOzPj3_6SWDOOhAfEnI7LkfTzyWcl5HaE09rnoPgZwF1xSlwvaV2ndUoT5qcJAQ3EQy3NO1uNZtcx0LmD1tD1dP-B0d04nB0hbGi8sr1rN-QVr-Fie1-tagUBQBlIhM7LojGiuPQWBJLz6-xG0-YPP-YGPkETKQMvYoMYZxyLVwFBLR0kD-RxT3rusCjQH4LqbPY4RBPwGmt9Hamuarozi3B5IfRaBmTawZCrI6NgxxrgxmD_epU18PQQVbTcst-d23CI4FyxDQ4tGRCiN1Iga9Czzpgb4Wjp_QA12XsjaFfSoJL0s1CjVwGPNkgCYQZId7h73QBQBlIhM7LojGiuPQWBJLz6-xG0-YPP-YGPkETKQMvYoMYZxyLVwFBLR0kD-RxT3rusCjQH4LqbPY4RBPwGmt9Hamuarozi3B5IfRaBmTawZCrI6NgxxrgxmD_epU18PQQVbTcst-d23CI4FyxDQ4tGRCiN1Iga9Czzpgb4Wjp_QA12XsjaFfSoJL0s1CjVwGPNkgCYQZId7h73Q'
         $.ajax({
             method: "GET",
             url: URL ,
@@ -106,8 +116,8 @@ $(document).ready(function(session){
         })
     })
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////         UPDATING SONG QUEUE       /////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
+    ////         UPDATING SONG QUEUE       ////////////////////////////////////////////
     //// So my current solution is adding a song 20 seconds before the second to last song ends." //
     ////      https://github.com/spotify/web-api/issues/574S    ////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////

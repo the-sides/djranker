@@ -12,6 +12,4 @@ def sessionlist(request,sid):
     context = {'sid':sid}
     return render(request,'list.html',context)
 
-def authorizesession(request,accessCode,state):
-    return render(request,'listapproved.html',accessCode,state)
 
