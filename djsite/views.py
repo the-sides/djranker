@@ -26,8 +26,8 @@ def ajax_new_session(request):
             response_data['result'] = True
 
             # Validator
-            status = session.objects.get(id=0)
-            print(status.name)
+            status = session.objects.get(sid=ajax_data['sid'])
+            print(status)
             print(response_data)
 
         except Exception as error: print(error)

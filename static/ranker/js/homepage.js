@@ -106,6 +106,7 @@ function newPlaylist(){
 function launchSession(){
     
     console.log("Playlist saved in database:", ajax_post['puri'])
+    ajax_post['token'] = getToken()
     // Create session model
     $.ajax({
         method: "POST",
@@ -115,7 +116,7 @@ function launchSession(){
         },
         success : function(){
             console.log("Session POST sent", ajax_post)
-            window.location.href = rootURL + ajax_post['sid']
+            // window.location.href = rootURL + ajax_post['sid']
         },
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
@@ -191,11 +192,11 @@ $(document).ready(function(){
     //     a listener to pre-existing where anything new might have been created
     $('#user-playlists').on('click', '.result',function(){
         // which playlist was clicked?
-        var i = parseInt($(this).attr('id')[8])
+        var i = parseInt($(this).attr('id').substring(8))
         console.log("i:", i)
         console.log(playlist_json)
         // oh it was i? huh, well use that index and give is to the playlist_json
-        console.log(playlist_json.items[i].id.length)
+        console.log(playlist_json.items[i].id)
         ajax_post['puri'] = playlist_json.items[i].id
 
     })
