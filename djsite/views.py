@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 import json
 
 from ranker.models import *
@@ -8,7 +9,7 @@ from ranker.models import *
 def homepage(request):
     return render(request,'homepage.html')
 
-
+@require_POST
 def ajax_new_session(request):
     response_data = {'result':False}
     print("started", request.method)
