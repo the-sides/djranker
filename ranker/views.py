@@ -8,8 +8,9 @@ from django.shortcuts import render
 
 # Create your views here.
 
-def sessionlist(request):
-    return render(request,'list.html')
+def sessionlist(request,sid):
+    context = {'sid':sid}
+    return render(request,'list.html',context)
 
 def authorizesession(request,accessCode,state):
     return render(request,'listapproved.html',accessCode,state)
