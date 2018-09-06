@@ -1,23 +1,45 @@
- 
+// CSRF Token
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+}); 
 
-//                      THIS IS WRONG! USE DJANGO CALLS TO MODELS.PY. WILL NEED ACROSS CLIENTS
-// function saveToken(t,session){
-//     session['token'] = t;
-//     console.log(session.token
-// }
-
-function updateRanklist(){
+function getSession(){
     // Ajax GET for all tracks w/ matching sid
     // Display list in order
-    // 
+    var sid = $('#sid').text()
+    $.ajax({
+        method: "GET",
+        url: 'ajax_view_session/' + sid,
+        headers: {
+            'Accept': 'application/json' ,
+            'Content-Type': 'application/json',
+            // Token will depend on the user hosting
+            'Authorization': 'Bearer '+ token
+        },
+    })
+    return sid
+
+}
+function updateRanklist(){
+
 }
 
 $(document).ready(function(session){ 
-    // Upon launch, 
+    // Upon launch,
+    //   optain sid while recieving token, playlist ID ('puri'), and party name
+    var sid = getSession()
     // updateRanklist()
 
-
     var results = {};
+    
     // Results are accessable globally
     // Search process functions
 
