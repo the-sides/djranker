@@ -11,32 +11,58 @@ $.ajaxSetup({
     }
 }); 
 
-function getSession(){
-    // Ajax GET for all tracks w/ matching sid
-    // Display list in order
-    var sid = $('#sid').text()
+
+function refreshRanklist(sid){
+    var rv = ""
     $.ajax({
         method: "GET",
-        url: 'ajax_view_session/' + sid,
-        headers: {
-            'Accept': 'application/json' ,
-            'Content-Type': 'application/json',
-            // Token will depend on the user hosting
-            'Authorization': 'Bearer '+ token
+        url: 'ajax_refresh_ranklist/'+sid,
+        success : function(json){
+            console.log(json)
+            rv = json['token']
         },
+        error : function(xhr, errmsg, err,json){
+            console.log(xhr.status + ': ' + xhr.responseText)
+        }
     })
-    return sid
+}
+
+function spotifyCallToken(type,value){
 
 }
-function updateRanklist(){
+
+function getToken(){
+    // GET Latest token from db
+    // use token in spotify call and catch the new one
+    // POST new!!!! latest token into db for next call
+    //    THIS TRANSACTION MUST HAPPEN
+    $.ajax({
+        method: "GET",
+        url: 'ajax_get_token',
+        success : function(json){
+            console.log("Ajax successooooo")
+            console.log(json)
+        },
+        error : function(xhr, errmsg, err,json){
+            console.log(xhr.status + ': ' + xhr.responseText)
+        }
+    })
+
+}
+
+function postToken(){
+
+}
+
+function spotifyCall(type,value){
 
 }
 
 $(document).ready(function(session){ 
     // Upon launch,
     //   optain sid while recieving token, playlist ID ('puri'), and party name
-    var sid = getSession()
-    // updateRanklist()
+    var sid = window.location.href.substr(-6)
+    var token = refreshRanklist(sid)
 
     var results = {};
     
@@ -138,10 +164,12 @@ $(document).ready(function(session){
         })
     })
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    ////         UPDATING SONG QUEUE       ////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////         UPDATING SONG QUEUE       /////////////////////////////////////////////////////////
     //// So my current solution is adding a song 20 seconds before the second to last song ends." //
     ////      https://github.com/spotify/web-api/issues/574S    ////////////////////////////////////
+    ////                                                        ////////////////////////////////////
+    ////    and I've come from the future to say fuck this, have server side processes do this    //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     //   https://developer.spotify.com/documentation/web-api/reference/playlists/reorder-playlists-tracks/
