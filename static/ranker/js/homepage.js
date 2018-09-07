@@ -190,6 +190,7 @@ $(document).ready(function(){
     // Playlist Selection buttons
     //     because buttons do not exist when the doc is loaded, must attach 
     //     a listener to pre-existing where anything new might have been created
+    
     $('#user-playlists').on('click', '.result',function(){
         // which playlist was clicked?
         var i = parseInt($(this).attr('id').substring(8))
@@ -198,6 +199,7 @@ $(document).ready(function(){
         // oh it was i? huh, well use that index and give is to the playlist_json
         console.log(playlist_json.items[i].id)
         ajax_post['puri'] = playlist_json.items[i].id
+        $('#pstatus').text(playlist_json.items[i].name)
 
     })
 
@@ -247,6 +249,15 @@ $(document).ready(function(){
             // Using a base playlist which hasn't been choosen yet
 
         }        
+
+
+
+
+            // CHECK FOR PRE-EXISTING SID
+
+
+
+
             // LAUNCH IF NO STOPS
         else{
             newPlaylist()
@@ -265,7 +276,7 @@ $(document).ready(function(){
         var sid = window.prompt("What is the party's unique 6 digit code?")
         // Redirect to ranklist
         if ( sid.length == 6){
-            window.location.href = "127.0.0.1:8000/link/" + sid;
+            window.location.href = rootURL + sid;
         }
         else console.log("need 6 digit key");
     })
