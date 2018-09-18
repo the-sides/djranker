@@ -31,16 +31,16 @@ function spotifyCallToken(type,value){
 
 }
 
-function getToken(){
+function getToken(sid){
     // GET Latest token from db
     // use token in spotify call and catch the new one
     // POST new!!!! latest token into db for next call
     //    THIS TRANSACTION MUST HAPPEN
     $.ajax({
         method: "GET",
-        url: 'ajax_get_token',
+        url: 'ajax_get_token/' + sid,
         success : function(json){
-            console.log("Ajax successooooo")
+            console.log("Ajax get successooooo")
             console.log(json)
         },
         error : function(xhr, errmsg, err,json){
@@ -50,12 +50,29 @@ function getToken(){
 
 }
 
-function postToken(){
-
+function postToken(sid, token){
+    $.ajax({
+        method:"POST",
+        url: 'ajax_post_token/' + sid,
+        data: {
+            "token": token
+        },
+        success : function(json){
+            console.log("Ajax post sucessoooo")
+        },
+        error : function(xhr, errmsg, err,json){
+            console.log(xhr.status + ': ' + xhr.responseText)
+        }
+    })
 }
 
 function spotifyCall(type,value){
-
+    $.ajax({
+        method: "POST",
+        headers: {
+            // "Authorization" : 
+        }
+    })
 }
 
 $(document).ready(function(session){ 
@@ -63,7 +80,7 @@ $(document).ready(function(session){
     //   optain sid while recieving token, playlist ID ('puri'), and party name
     var sid = window.location.href.substr(-6)
     var token = refreshRanklist(sid)
-
+    getToken(sid);
     var results = {};
     
     // Results are accessable globally
