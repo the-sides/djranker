@@ -43,6 +43,7 @@ def ajax_get_token(request,sid):
             sesh = session()
             sesh = session.objects.get(sid=sid)
             responce_data['token'] = session.token
+            # respoce_data['client_secret'] =    import from system variable
         except Exception as error: request_data['result'] = error
     JsonResponse(responce_data)
 
