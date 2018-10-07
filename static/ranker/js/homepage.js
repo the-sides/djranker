@@ -18,17 +18,24 @@ var ajax_post = new Object;
 var playlist_json = new Object;
 var offset = 0;
 
+
 function getToken(){
     var codeInd = window.location.href.indexOf("=")
     var codeEndInd = window.location.href.indexOf("&",codeInd)
     var token = window.location.href.substring(codeInd+1,codeEndInd)
-    if (token.length !== 207) { return -1 }
+    // console.log(token);
+    if (token.length !== 210) { 
+        return -1;
+     }
     return token;
 }
+
+
 function savePURI(id){
     window.ajax_post['puri'] = id;
     return ajax_post;
 }
+
 
 function callPlaylist(offset){
     console.log("Playlist list offset: ",offset)
