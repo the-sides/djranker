@@ -31,7 +31,7 @@ def ajax_refresh_ranklist(request,sid):
            sesh = session.objects.get(sid=sid)
 
            responce_data['result'] = True
-        except Exception as error: request_data['result'] = error
+        except Exception as error: responce_data['result'] = error
             
     return JsonResponse(responce_data)
 
@@ -42,14 +42,14 @@ def ajax_get_token(request,sid):
         try:
             sesh = session()
             sesh = session.objects.get(sid=sid)
-            responce_data['token'] = session.token
+            responce_data['token'] = sesh.token
             # respoce_data['client_secret'] =    import from system variable
-        except Exception as error: request_data['result'] = error
-    JsonResponse(responce_data)
+        except Exception as error: responce_data['result'] = error
+    return JsonResponse(responce_data)
 
 @require_POST
 def ajax_post_token(request,sid):
-    request_data = {'result': False}
+    responce_data = {'result': False}
     if request.method == "POST":
         try:
             sesh = session()
@@ -57,5 +57,5 @@ def ajax_post_token(request,sid):
             sesh.token = request.POST.get('token')
             print("New token received", sesh.token)
             sesh.save()
-        except Exception as error: request_data['result'] = error
-    JsonResponse(responce_data)
+        except Exception as error: responce_data['result'] = error
+    return JsonResponse(responce_data)
