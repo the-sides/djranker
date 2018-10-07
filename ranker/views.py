@@ -27,10 +27,14 @@ def ajax_refresh_ranklist(request,sid):
     responce_data = {'result': False}
     if request.method == "GET":
         try:
-           sesh = session()
-           sesh = session.objects.get(sid=sid)
+            # song_requests = track()
+            # song_requests = track.objects.get(session_id=sid)
+            return JsonResponse({'result': False})
+            
+            # Find out how to check if tracks exist first!
+            responce_data['song_requests'] = track.objects.get(session_id=sid)
 
-           responce_data['result'] = True
+            responce_data['result'] = True
         except Exception as error: responce_data['result'] = error
             
     return JsonResponse(responce_data)
@@ -43,8 +47,11 @@ def ajax_get_token(request,sid):
             sesh = session()
             sesh = session.objects.get(sid=sid)
             responce_data['token'] = sesh.token
-            # respoce_data['client_secret'] =    import from system variable
+            responce_data['result'] = True
+            # responce_data['client_secret'] =    import from system variable
+
         except Exception as error: responce_data['result'] = error
+
     return JsonResponse(responce_data)
 
 @require_POST
@@ -57,5 +64,8 @@ def ajax_post_token(request,sid):
             sesh.token = request.POST.get('token')
             print("New token received", sesh.token)
             sesh.save()
+            responce_data['result'] = True
+
         except Exception as error: responce_data['result'] = error
+
     return JsonResponse(responce_data)

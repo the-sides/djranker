@@ -13,13 +13,13 @@ $.ajaxSetup({
 
 
 function refreshRanklist(sid){
-    var rv = ""
+    // var rv = ""
     $.ajax({
         method: "GET",
         url: 'ajax_refresh_ranklist/'+sid,
         success : function(json){
             console.log(json)
-            rv = json['token']
+            // rv = json['token']
         },
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
@@ -28,7 +28,18 @@ function refreshRanklist(sid){
 }
 
 function spotifyCallToken(type,value){
+    // Universal function for making spotify calls while refreshing the session's token 
+    //   for the next user's call
 
+    // Get latest token and error check
+    var token = getToken(sid);
+    if(token != -1){
+        // Make spotify call, POSTing new token
+        // after token is guarenteed
+        if(spotifyCall(type,value) == -1){
+            
+        }
+    }
 }
 
 function getToken(sid){
@@ -42,9 +53,11 @@ function getToken(sid){
         success : function(json){
             console.log("Ajax get successooooo")
             console.log(json)
+            return json.token;
         },
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
+            return -1;
         }
     })
 
