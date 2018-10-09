@@ -51,8 +51,7 @@ function getToken(sid){
         method: "GET",
         url: 'ajax_get_token/' + sid,
         success : function(json){
-            console.log("Ajax get successooooo")
-            console.log(json)
+            console.log("Ajax get token successooooo")
             return json.token;
         },
         error : function(xhr, errmsg, err,json){
@@ -92,8 +91,7 @@ $(document).ready(function(session){
     // Upon launch,
     //   optain sid while recieving token, playlist ID ('puri'), and party name
     var sid = window.location.href.substr(-6)
-    var token = refreshRanklist(sid)
-    getToken(sid);
+    var token = getToken(sid);
     var results = {};
     
     // Results are accessable globally
@@ -173,7 +171,6 @@ $(document).ready(function(session){
         searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
         URL = "https://api.spotify.com/v1/search?q=" + searchStr + "&type=track&market=US&limit=10"
         console.log(URL)
-        token = 'BQB-y-YCBBpXxTr9iaCBSN4Br34a3zpS_U3cFhtWXEGrKDypRRFsKVsFAP_2enQJdrnMl9rQMjhTbtFCEZjDlsEnOzPj3_6SWDOOhAfEnI7LkfTzyWcl5HaE09rnoPgZwF1xSlwvaV2ndUoT5qcJAQ3EQy3NO1uNZtcx0LmD1tD1dP-B0d04nB0hbGi8sr1rN-QVr-Fie1-tagUBQBlIhM7LojGiuPQWBJLz6-xG0-YPP-YGPkETKQMvYoMYZxyLVwFBLR0kD-RxT3rusCjQH4LqbPY4RBPwGmt9Hamuarozi3B5IfRaBmTawZCrI6NgxxrgxmD_epU18PQQVbTcst-d23CI4FyxDQ4tGRCiN1Iga9Czzpgb4Wjp_QA12XsjaFfSoJL0s1CjVwGPNkgCYQZId7h73QBQBlIhM7LojGiuPQWBJLz6-xG0-YPP-YGPkETKQMvYoMYZxyLVwFBLR0kD-RxT3rusCjQH4LqbPY4RBPwGmt9Hamuarozi3B5IfRaBmTawZCrI6NgxxrgxmD_epU18PQQVbTcst-d23CI4FyxDQ4tGRCiN1Iga9Czzpgb4Wjp_QA12XsjaFfSoJL0s1CjVwGPNkgCYQZId7h73Q'
         $.ajax({
             method: "GET",
             url: URL ,
@@ -188,7 +185,32 @@ $(document).ready(function(session){
                 saveResults(json)
                 displayResults(results)
             },
-            error : function(xhr, errmsg, err) { console.log(xhr.status + ': ' + xhr.responseText); }
+            error : function(xhr, errmsg, err) { 
+                console.log(xhr.status + ': ' + xhr.responseText);   
+                  // AUTHORIZE WITH VISITOR FOR NEW SEARCH TOKEN 
+
+                // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                scopes = [
+                    'user-modify-playback-state',
+                    'playlist-read-private',
+                    'playlist-modify-public',
+                    'playlist-read-collaborative',
+                    'user-read-currently-playing',
+                    'user-read-playback-state'
+                ]
+                popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow')
+                // popup = window.open("http://localhost:8000/authenticate")
+                function receiveMessage(event){
+                    console.log(event.data);
+                    // Boom, we have a token, post to DB? Or use for local session
+                }
+                window.addEventListener("message", receiveMessage, false)
+                setTimeout(function(){
+                    popup.close()
+                }, 2000)
+                
+            }
 
             
         })

@@ -9,6 +9,9 @@ from ranker.models import *
 def homepage(request):
     return render(request,'homepage.html')
 
+def authenticate(request):
+    return render(request, "authenticate.html")
+
 @require_POST
 def ajax_new_session(request):
     response_data = {'result':False}
