@@ -87,50 +87,111 @@ function spotifyCall(type,value){
     })
 }
 
+function authorizeVisitor(){
+    var token;
+    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow')
+    // popup = window.open("http://localhost:8000/authenticate")
+    function receiveMessage(event){
+        console.log(event.data);
+        window.token = event.data;
+        // Boom, we have a token, post to DB? Or use for local session
+    }
+    window.addEventListener("message", receiveMessage, false)
+    setTimeout(function(){
+        popup.close()
+    }, 1000)
+
+    // return token;
+
+}
+
+function searchRequest(){
+    searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
+    console.log("New search for ", searchStr);
+    URL = "https://api.spotify.com/v1/search?q=" + searchStr + "&type=track&market=US&limit=10"
+    console.log(URL)
+    $.ajax({
+        method: "GET",
+        url: URL ,
+        headers: {
+            'Accept': 'application/json' ,
+            'Content-Type': 'application/json',
+            // Token will depend on the user hosting
+            'Authorization': 'Bearer '+ window.token
+        },
+        success : function(json){
+            console.log("Search returned")
+            saveResults(json)
+            displayResults(results)
+        },
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ': ' + xhr.responseText);   
+                // AUTHORIZE WITH VISITOR FOR NEW SEARCH TOKEN 
+
+            // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            scopes = [
+                'user-modify-playback-state',
+                'playlist-read-private',
+                'playlist-modify-public',
+                'playlist-read-collaborative',
+                'user-read-currently-playing',
+                'user-read-playback-state'
+            ]
+            authorizeVisitor();
+            searchRequest();
+            
+        }
+
+        
+    })
+}
+
+function saveResults(data){
+    $(".result").remove();  // Existing search items
+    results = data;
+}
+
+function clearResults(){
+    $("#drop-results").css("display","none")
+}
+
+function displayResults(){
+    // At this point, the result variable is filled with 10 tracks as an object
+    // Prompt the user to pick one of the tracks to be requested
+    $("#drop-results").css("display","block")
+
+    console.log(results);
+    console.log("# of tracks returned: ",results.tracks.items.length )
+        // A search may be too specific and return less than 10 tracks
+    
+    for (var i = 0; i < results.tracks.items.length;i++){
+        song = results.tracks.items[i];
+
+        //   FIXME:
+        // Check if should be #result-body
+        $('#result-table').append("<tr></tr>")
+        cell = $('tr:last')
+        cell.append("<td>"+song.name+"</td>")
+        cell.append("<td>"+song.artists[0].name+"</td>")
+        cell.append("<td><button class='requested'>REQUEST</button></td>")
+        // The button will request details corresponding to the <tr> parent
+        cell.addClass("result").attr("id","track"+i)
+        console.log(song.name, " - ", song.artists[0].name)
+    }
+}
+var sid = window.location.href.substr(-6)
+window.token = getToken(sid);
+var results = {};
+
 $(document).ready(function(session){ 
     // Upon launch,
     //   optain sid while recieving token, playlist ID ('puri'), and party name
-    var sid = window.location.href.substr(-6)
-    var token = getToken(sid);
-    var results = {};
     
     // Results are accessable globally
     // Search process functions
 
 
-    function saveResults(data){
-        $(".result").remove();
-        results = data;
-    }
-
-    function clearResults(){
-        $("#drop-results").css("display","none")
-    }
-
-    function displayResults(){
-        // At this point, the result variable is filled with 10 tracks as an object
-        // Prompt the user to pick one of the tracks to be requested
-        $("#drop-results").css("display","block")
-
-        console.log(results);
-        console.log("# of tracks returned: ",results.tracks.items.length )
-            // A search may be too specific and return less than 10 tracks
-        
-        for (var i = 0; i < results.tracks.items.length;i++){
-            song = results.tracks.items[i];
-
-            //   FIXME:
-            // Check if should be #result-body
-            $('#result-table').append("<tr></tr>")
-            cell = $('tr:last')
-            cell.append("<td>"+song.name+"</td>")
-            cell.append("<td>"+song.artists[0].name+"</td>")
-            cell.append("<td><button class='requested'>REQUEST</button></td>")
-            // The button will request details corresponding to the <tr> parent
-            cell.addClass("result").attr("id","track"+i)
-            console.log(song.name, " - ", song.artists[0].name)
-        }
-    }
 
     //Used once a request is submitted
     $('#drop-results').on('click','.requested',function(){
@@ -144,14 +205,14 @@ $(document).ready(function(session){
 
 
     $('#authorize').click(function(session){
-        window.location.href = "https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/list&scope=user-read-private%20user-read-email&response_type=token&state=123"
+        // sid = authorizeVisitor(sid)
         // $.ajax({
         //     // I'm not sure if this should be done with a curl call
         // })
         var codeInd = window.location.href.indexOf("=")
         var codeEndInd = window.location.href.indexOf("&",codeInd)
         var token = window.location.href.substring(codeInd+1,codeEndInd)
-        saveToken(token,session)
+        // saveToken(token,session)
         console.log(session.token)
     })
 
@@ -167,54 +228,7 @@ $(document).ready(function(session){
         // }
 
     })
-    $('#req-btn').click(function(){
-        searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
-        URL = "https://api.spotify.com/v1/search?q=" + searchStr + "&type=track&market=US&limit=10"
-        console.log(URL)
-        $.ajax({
-            method: "GET",
-            url: URL ,
-            headers: {
-                'Accept': 'application/json' ,
-                'Content-Type': 'application/json',
-                // Token will depend on the user hosting
-                'Authorization': 'Bearer '+ token
-            },
-            success : function(json){
-                console.log("Search returned")
-                saveResults(json)
-                displayResults(results)
-            },
-            error : function(xhr, errmsg, err) { 
-                console.log(xhr.status + ': ' + xhr.responseText);   
-                  // AUTHORIZE WITH VISITOR FOR NEW SEARCH TOKEN 
-
-                // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                scopes = [
-                    'user-modify-playback-state',
-                    'playlist-read-private',
-                    'playlist-modify-public',
-                    'playlist-read-collaborative',
-                    'user-read-currently-playing',
-                    'user-read-playback-state'
-                ]
-                popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow')
-                // popup = window.open("http://localhost:8000/authenticate")
-                function receiveMessage(event){
-                    console.log(event.data);
-                    // Boom, we have a token, post to DB? Or use for local session
-                }
-                window.addEventListener("message", receiveMessage, false)
-                setTimeout(function(){
-                    popup.close()
-                }, 2000)
-                
-            }
-
-            
-        })
-    })
+    $('#search-btn').click(function(){searchRequest()})
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////         UPDATING SONG QUEUE       /////////////////////////////////////////////////////////
