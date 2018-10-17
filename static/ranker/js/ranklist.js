@@ -94,6 +94,7 @@ function authorizeVisitor(){
     function receiveMessage(event){
         console.log(event.data);
         window.token = event.data;
+        searchRequest();
         // Boom, we have a token, post to DB? Or use for local session
     }
     window.addEventListener("message", receiveMessage, false)
@@ -139,7 +140,7 @@ function searchRequest(){
                 'user-read-playback-state'
             ]
             authorizeVisitor();
-            searchRequest();
+            // searchRequest();
             
         }
 
@@ -228,7 +229,7 @@ $(document).ready(function(session){
         // }
 
     })
-    $('#search-btn').click(function(){searchRequest()})
+    $('#search-btn').click(searchRequest)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////         UPDATING SONG QUEUE       /////////////////////////////////////////////////////////

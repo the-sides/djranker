@@ -20,14 +20,15 @@ var offset = 0;
 
 
 function getToken(){
-    var codeInd = window.location.href.indexOf("=")
-    var codeEndInd = window.location.href.indexOf("&",codeInd)
-    var token = window.location.href.substring(codeInd+1,codeEndInd)
+    return ajax_post.token;
+    // var codeInd = window.location.href.indexOf("=")
+    // var codeEndInd = window.location.href.indexOf("&",codeInd)
+    // var token = window.location.href.substring(codeInd+1,codeEndInd)
     // console.log(token);
-    if (token.length !== 210) { 
-        return -1;
-     }
-    return token;
+    // if (token.length !== 210) { 
+    //     return -1;
+    //  }
+    // return token;
 }
 
 
@@ -66,12 +67,8 @@ function callPlaylist(offset){
 function fillPlaylists(json){
     // Clear any existing playlist results before showing more
     $( '.result' ).remove();
-    
-    // Find what's smaller, the search limit or the amount of playlists user holds.
-    var n = json.limit
-    if (n > json.total) { n = json.total }
 
-    for (var i = 0; i < n ; i++){
+    for (var i = 0; i < Object.keys(json.items).length ; i++){
         playlist = json.items[i]
         $('#playlist-body').append("<tr></tr>")
         cell = $('tr:last')
@@ -132,18 +129,9 @@ function launchSession(){
     })
 }
 
-$(document).ready(function(){
-    
-    $('#host-btn').click(function(){
-        // Open or close dropdown-session-options
-        $("#dropdown-session-options").slideToggle(400)
-    })
-
-    $('#autho-btn').click(function(){
-        ///////////////////////////////
-        //          SCOPES
-        ///////////////////////////////
-        scopes = [
+function authorizeHost(){
+    var token;
+            scopes = [
             'user-modify-playback-state',
             'playlist-read-private',
             'playlist-modify-public',
@@ -151,26 +139,30 @@ $(document).ready(function(){
             'user-read-currently-playing',
             'user-read-playback-state'
         ]
-        //   SETUP
-        //user-modify-playback          to ensure shuffle is off, user-read will validate throughout, 
-        //playlist-read-private         to make new duplicate from old baselist content
-        
-        //   RUN-TIME
-        //playlist-modify-public        new playlist will be public while manipulating
-        //user-read-currently-playing   for UI presentation
-        //user-read-playback-state      for timing playlist shifts.
+    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow')
+    // popup = window.open("http://localhost:8000/authenticate")
+    function receiveMessage(event){
+        console.log(event.data);
+        window.ajax_post['token'] = event.data;
+        // Boom, we have a token, post to DB? Or use for local session
+    }
+    window.addEventListener("message", receiveMessage, false)
+    setTimeout(function(){
+        popup.close()
+    }, 1000)
 
-        window.location.href = "https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123"
+    return token;
 
-        // As the redirected url will contain the access code, href will return token with getToken(), so start listing playlists
-        // To scale, if I'm about to run a global timer on how long an object exists, 
-        //  I could create the model the moment of authorization. If the session isn't
-        //   followed through, I can refresh the access codes amongst the active user-base
-        // Any ways, with the access code saved, I can redirect the user right after activation
-        //   to another page with a cleaner url.
-        console.log(getToken())
+}
 
+$(document).ready(function(){
+    
+    $('#host-btn').click(function(){
+        // Open or close dropdown-session-options
+        $("#dropdown-session-options").slideToggle(400)
     })
+
+    $('#autho-btn').click(authorizeHost)
     
     $('#playlist-btn').click(function(){
         if (getToken() == -1){
@@ -217,7 +209,7 @@ $(document).ready(function(){
         callPlaylist(offset)
     })
     $('#next-playlists').click(function(){
-        // FIXME Check for limit, otherwise offset will go further out of bounds
+        if(offset+20 > playlist_json.total) return;
         offset += 20
         callPlaylist(offset)
     })
