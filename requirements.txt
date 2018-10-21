@@ -3,4 +3,4 @@ Django==2.1
 gunicorn==19.9.0
 pytz==2018.5
 whitenoise==4.1
-psycopg==2.7.2
+psycopg2==2.7.2
