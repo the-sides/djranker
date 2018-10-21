@@ -21,14 +21,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
-with open('/var/secret_key.txt') as f:
-    SECRET_KEY = f.read()  # Assuming no whitespace, use .strip() otherwise
+SECRET_KEY = os.environ.get('DJRANKER_KEY')
+# with open('/var/secret_key.txt') as f:
+#     SECRET_KEY = f.read()  # Assuming no whitespace, use .strip() otherwise
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '.herokuapp.com']
 
 CSRF_USE_SESSIONS = True
 
@@ -78,19 +78,27 @@ WSGI_APPLICATION = 'djsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'djranker',
-        'USER': 'the-sides',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
 
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'djranker',
+            'USER': 'the-sides',
+            'PASSWORD': '',
+            'HOST': 'localhost',
+            'PORT': '8000',
+        }
+    }
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
