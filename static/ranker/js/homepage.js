@@ -38,7 +38,7 @@ function savePURI(id){
 }
 
 
-function callPlaylist(offset){
+function getPlaylist(offset){
     console.log("Playlist list offset: ",offset)
     
     var URL = "https://api.spotify.com/v1/me/playlists"
@@ -57,14 +57,14 @@ function callPlaylist(offset){
         success : function(json){
             console.log(json)
             // Later implementation
-            fillPlaylists(json)
+            showPlaylistsList(json)
             playlist_json = json
         },
         error : function(xhr, errmsg, err) { console.log(xhr.status + ': ' + xhr.responseText); }
     })
 }
 
-function fillPlaylists(json){
+function showPlaylistsList(json){
     // Clear any existing playlist results before showing more
     $( '.result' ).remove();
 
@@ -139,18 +139,15 @@ function authorizeHost(){
             'user-read-currently-playing',
             'user-read-playback-state'
         ]
-    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow')
+    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
     // popup = window.open("http://localhost:8000/authenticate")
     function receiveMessage(event){
         console.log(event.data);
         window.ajax_post['token'] = event.data;
+        popup.close()
         // Boom, we have a token, post to DB? Or use for local session
     }
     window.addEventListener("message", receiveMessage, false)
-    setTimeout(function(){
-        popup.close()
-    }, 1000)
-
     return token;
 
 }
@@ -174,7 +171,7 @@ $(document).ready(function(){
         
         // If the results have been pressed on a previous click, don't bother again.
         if(!$('.result').length){
-            callPlaylist(offset)
+            getPlaylist(offset)
         }
         // State maintanance
         if(ajax_post['puri'].length !== 22){
@@ -206,12 +203,12 @@ $(document).ready(function(){
     $('#prev-playlists').click(function(){
         if(offset == 0) return;
         offset -= 20 
-        callPlaylist(offset)
+        getPlaylist(offset)
     })
     $('#next-playlists').click(function(){
         if(offset+20 > playlist_json.total) return;
         offset += 20
-        callPlaylist(offset)
+        getPlaylist(offset)
     })
 
     $('#blanklist-btn').click(function(){
@@ -261,6 +258,8 @@ $(document).ready(function(){
         else{
             newPlaylist()
             // Within newPlaylist(), launchSession() will be called with ajax success
+            //  newPlaylist ->  
+            // make playlist
 
             // Check models for session with existing sid
             // FIXME: Assume sids will be unique FOR NOW 

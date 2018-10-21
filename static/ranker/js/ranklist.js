@@ -89,18 +89,16 @@ function spotifyCall(type,value){
 
 function authorizeVisitor(){
     var token;
-    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow')
+    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
     // popup = window.open("http://localhost:8000/authenticate")
     function receiveMessage(event){
         console.log(event.data);
         window.token = event.data;
+        popup.close()
         searchRequest();
         // Boom, we have a token, post to DB? Or use for local session
     }
     window.addEventListener("message", receiveMessage, false)
-    setTimeout(function(){
-        popup.close()
-    }, 1000)
 
     // return token;
 
