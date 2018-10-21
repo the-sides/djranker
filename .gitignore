@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 *.pyc
 db.sqlite3
 myvenv
 __pycache__
 local_settings.py
+=======
+db.sqlite3
+settings.py
+>>>>>>> e2285cbf8d191d4aa65b700c8c2018e657895c80
