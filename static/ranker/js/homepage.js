@@ -14,6 +14,7 @@ $.ajaxSetup({
 var rootURL = "http://localhost:8000/list/"
 var ajax_post = new Object;
     ajax_post['puri'] = ""
+    ajax_post['token'] = ""
     // If something goes wrong, it's bc I uncommented the above
 var playlist_json = new Object;
 var offset = 0;
@@ -39,6 +40,9 @@ function savePURI(id){
 
 
 function getPlaylist(offset){
+    if(window.ajax_post['token'] == ""){
+        authorizeHost();
+    }
     console.log("Playlist list offset: ",offset)
     
     var URL = "https://api.spotify.com/v1/me/playlists"
@@ -60,7 +64,9 @@ function getPlaylist(offset){
             showPlaylistsList(json)
             playlist_json = json
         },
-        error : function(xhr, errmsg, err) { console.log(xhr.status + ': ' + xhr.responseText); }
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ': ' + xhr.responseText); 
+        }
     })
 }
 
@@ -81,10 +87,13 @@ function showPlaylistsList(json){
     }
 }
 
+function uniqueSidCheck(){ return }
+
 function newPlaylist(){
     $.ajax({
         method: "POST",
         url: "https://api.spotify.com/v1/users/the_sides/playlists",
+        async: false,
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -99,7 +108,6 @@ function newPlaylist(){
             console.log(json.id)
             window.ajax_post['puri'] = json.id
             console.log("New playlist made: ", ajax_post['puri'], ajax_post['puri'].length)
-            launchSession()
         },
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
@@ -107,7 +115,28 @@ function newPlaylist(){
     })
 }
 
-function launchSession(){
+function fillNewPlaylist(){
+    // Ajax call for finding songs
+    var asynccheck = "before"
+    $.ajax({
+        method: "GET",
+        url: 'https://api.spotify.com/v1/playlists/'+ window.ajax_post['puri'] +'/tracks',
+        async: false,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken()
+        },
+        success : function(){
+            console.log("Playlist has been successfully scanned")
+            asynccheck = "after"
+        }
+    })
+    console.log(asynccheck);
+}
+
+
+function saveSession(){
     
     console.log("Playlist saved in database:", ajax_post['puri'])
     ajax_post['token'] = getToken()
@@ -115,6 +144,7 @@ function launchSession(){
     $.ajax({
         method: "POST",
         url: 'ajax_new_session',
+        async: false,
         data:{
             data: JSON.stringify(ajax_post),
         },
@@ -173,13 +203,14 @@ $(document).ready(function(){
         if(!$('.result').length){
             getPlaylist(offset)
         }
+
         // State maintanance
         if(ajax_post['puri'].length !== 22){
         // Don't state that you are about to choose if you already picked playlist
         // Prevents user from picking, clicking fresh, then going back to picked. 
             ajax_post['puri'] = "choose"
         }
-        $('#pstatus').text("YOUR PLAYLIST")
+        else $('#pstatus').text("YOUR PLAYLIST")
     })
     
 
@@ -256,16 +287,13 @@ $(document).ready(function(){
 
             // LAUNCH IF NO STOPS
         else{
+            // Verify that sid is unused first
+            uniqueSidCheck()  // FIXME: Assume sids will be unique FOR NOW 
             newPlaylist()
-            // Within newPlaylist(), launchSession() will be called with ajax success
-            //  newPlaylist ->  
-            // make playlist
+            if(window.ajax_post['puri'].length == 22) fillNewPlaylist();
+            saveSession()
 
-            // Check models for session with existing sid
-            // FIXME: Assume sids will be unique FOR NOW 
-
-
-            console.log(ajax_post['pname'], ajax_post['sid'])
+            console.log("Party Name: ", ajax_post['pname'],"Session ID: ", ajax_post['sid'])
         }
 
     })
