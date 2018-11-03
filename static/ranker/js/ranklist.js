@@ -51,7 +51,7 @@ function getToken(sid){
         method: "GET",
         url: 'ajax_get_token/' + sid,
         success : function(json){
-            console.log("Ajax get token successooooo")
+            console.log("Ajax get token successooooo", json.token)
             return json.token;
         },
         error : function(xhr, errmsg, err,json){
