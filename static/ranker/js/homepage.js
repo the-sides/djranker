@@ -22,16 +22,28 @@ var offset = 0;
 
 function getToken(){
     return ajax_post.token;
-    // var codeInd = window.location.href.indexOf("=")
-    // var codeEndInd = window.location.href.indexOf("&",codeInd)
-    // var token = window.location.href.substring(codeInd+1,codeEndInd)
-    // console.log(token);
-    // if (token.length !== 210) { 
-    //     return -1;
-    //  }
-    // return token;
 }
 
+function authorizeHost(offset){
+    var scopes = [
+            'user-modify-playback-state',
+            'playlist-read-private',
+            'playlist-modify-public',
+            'playlist-read-collaborative',
+            'user-read-currently-playing',
+            'user-read-playback-state'
+        ]
+    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
+    function receiveMessage(event){
+        console.log(event.data);
+        window.ajax_post['token'] = event.data;
+        popup.close()
+        if(offset == 0) getPlaylist(offset);
+        // Boom, we have a token, post to DB? Or use for local session
+    }
+    window.addEventListener("message", receiveMessage, false)
+
+}
 
 function savePURI(id){
     window.ajax_post['puri'] = id;
@@ -41,7 +53,10 @@ function savePURI(id){
 
 function getPlaylist(offset){
     if(window.ajax_post['token'] == ""){
-        authorizeHost();
+        authorizeHost(offset);
+        return; // With an offset, authorizeHost will getPlaylist
+                //  unless I'm able to wait for the receiveMessage
+                //  before continueing with this function
     }
     console.log("Playlist list offset: ",offset)
     
@@ -127,8 +142,8 @@ function fillNewPlaylist(){
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + getToken()
         },
-        success : function(){
-            console.log("Playlist has been successfully scanned")
+        success : function(results){
+            console.log(results)
             asynccheck = "after"
         }
     })
@@ -159,28 +174,6 @@ function saveSession(){
     })
 }
 
-function authorizeHost(){
-    var token;
-            scopes = [
-            'user-modify-playback-state',
-            'playlist-read-private',
-            'playlist-modify-public',
-            'playlist-read-collaborative',
-            'user-read-currently-playing',
-            'user-read-playback-state'
-        ]
-    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
-    // popup = window.open("http://localhost:8000/authenticate")
-    function receiveMessage(event){
-        console.log(event.data);
-        window.ajax_post['token'] = event.data;
-        popup.close()
-        // Boom, we have a token, post to DB? Or use for local session
-    }
-    window.addEventListener("message", receiveMessage, false)
-    return token;
-
-}
 
 $(document).ready(function(){
     
@@ -291,7 +284,7 @@ $(document).ready(function(){
             uniqueSidCheck()  // FIXME: Assume sids will be unique FOR NOW 
             newPlaylist()
             if(window.ajax_post['puri'].length == 22) fillNewPlaylist();
-            saveSession()
+            // saveSession()
 
             console.log("Party Name: ", ajax_post['pname'],"Session ID: ", ajax_post['sid'])
         }
