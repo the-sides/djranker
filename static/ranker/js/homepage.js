@@ -121,7 +121,10 @@ function newPlaylist(){
         }),
         success: function(json){
             console.log(json.id)
-            window.ajax_post['puri'] = json.id
+            // If template playlist provided, fill new one here
+            if(window.ajax_post['puri'].length === 22) 
+                fillNewPlaylist(json.id);
+
             console.log("New playlist made: ", ajax_post['puri'], ajax_post['puri'].length)
         },
         error : function(xhr, errmsg, err,json){
@@ -130,9 +133,10 @@ function newPlaylist(){
     })
 }
 
-function fillNewPlaylist(){
+function fillNewPlaylist(newPID){
+    var trackObj = {'uris':[]};
+    
     // Ajax call for finding songs
-    var asynccheck = "before"
     $.ajax({
         method: "GET",
         url: 'https://api.spotify.com/v1/playlists/'+ window.ajax_post['puri'] +'/tracks',
@@ -142,12 +146,41 @@ function fillNewPlaylist(){
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + getToken()
         },
-        success : function(results){
-            console.log(results)
-            asynccheck = "after"
+        success : function(result){
+            // console.log(result, result.total);
+
+            for(let i = 0; i < result.total; i++){
+                console.log(result.items[i].track.name)
+                trackObj.uris.push(result.items[i].track.uri)
+            }
+            console.log(trackObj);
+        },
+        error : function(xhr){
+            console.log("Selected playlist could not be found again?")
+            console.log(xhr.status + ': ' + xhr.responseText)
         }
     })
-    console.log(asynccheck);
+
+    // Fill new playlist
+    $.ajax({
+        method:"POST",
+        url: 'https://api.spotify.com/v1/playlists/'+ newPID +'/tracks',
+        async: false,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken()
+        },
+        data:JSON.stringify(trackObj),
+        success: function(responce){
+            console.log(responce);
+        },
+        error : function(xhr, errmsg, err,json){
+            console.log(xhr.status + ': ' + xhr.responseText)
+        }
+    })
+
+    window.ajax_post['puri'] = newPID;
 }
 
 
@@ -283,7 +316,7 @@ $(document).ready(function(){
             // Verify that sid is unused first
             uniqueSidCheck()  // FIXME: Assume sids will be unique FOR NOW 
             newPlaylist()
-            if(window.ajax_post['puri'].length == 22) fillNewPlaylist();
+            // if(window.ajax_post['puri'].length == 22) fillNewPlaylist();
             // saveSession()
 
             console.log("Party Name: ", ajax_post['pname'],"Session ID: ", ajax_post['sid'])
