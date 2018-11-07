@@ -89,6 +89,14 @@ function spotifyCall(type,value){
 
 function authorizeVisitor(){
     var token;
+    let scopes = [
+            'user-modify-playback-state',
+            'playlist-read-private',
+            'playlist-modify-public',
+            'playlist-read-collaborative',
+            'user-read-currently-playing',
+            'user-read-playback-state'
+        ];
     popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
     // popup = window.open("http://localhost:8000/authenticate")
     function receiveMessage(event){
@@ -100,7 +108,6 @@ function authorizeVisitor(){
     }
     window.addEventListener("message", receiveMessage, false)
 
-    // return token;
 
 }
 
@@ -129,14 +136,6 @@ function searchRequest(){
 
             // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            scopes = [
-                'user-modify-playback-state',
-                'playlist-read-private',
-                'playlist-modify-public',
-                'playlist-read-collaborative',
-                'user-read-currently-playing',
-                'user-read-playback-state'
-            ]
             authorizeVisitor();
             // searchRequest();
             
