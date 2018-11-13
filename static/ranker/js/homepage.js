@@ -17,6 +17,7 @@ var ajax_post = new Object;
     ajax_post['token'] = ""
     // If something goes wrong, it's bc I uncommented the above
 var playlist_json = new Object;
+var trackObj = {};
 var offset = 0;
 
 
@@ -26,12 +27,9 @@ function getToken(){
 
 function authorizeHost(offset){
     var scopes = [
-            'user-modify-playback-state',
             'playlist-read-private',
             'playlist-modify-public',
             'playlist-read-collaborative',
-            'user-read-currently-playing',
-            'user-read-playback-state'
         ]
     popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
     function receiveMessage(event){
@@ -45,10 +43,6 @@ function authorizeHost(offset){
 
 }
 
-function savePURI(id){
-    window.ajax_post['puri'] = id;
-    return ajax_post;
-}
 
 
 function getPlaylist(offset){
@@ -134,8 +128,8 @@ function newPlaylist(){
 }
 
 function fillNewPlaylist(newPID){
-    var trackObj = {'uris':[]};
     
+    var postAbleTracks = {'uris': []}
     // Ajax call for finding songs
     $.ajax({
         method: "GET",
@@ -147,11 +141,22 @@ function fillNewPlaylist(newPID){
             'Authorization': 'Bearer ' + getToken()
         },
         success : function(result){
-            // console.log(result, result.total);
+            console.log(result, result.total);
+            // Build the trackObj to reflect tracks in DB
+            trackObj = {"session_id" : ajax_post['sid'],
+                        "tracks":{}
+                    }
+            singleTrack = {}  // These will fill trackObj.tracks
 
             for(let i = 0; i < result.total; i++){
                 console.log(result.items[i].track.name)
-                trackObj.uris.push(result.items[i].track.uri)
+                singleTrack['name'] = result.items[i].track.name
+                singleTrack['uri'] = result.items[i].track.uri
+                singleTrack['artist'] = result.items[i].track.artists[0].name
+                singleTrack['album_img'] = result.items[i].track.album.images[2].url
+                // If you would like higher res album art, lower this indice  ^
+                trackObj.tracks[i] = singleTrack;
+                postAbleTracks.uris.push(result.items[i].track.uri)
             }
             console.log(trackObj);
         },
@@ -171,7 +176,7 @@ function fillNewPlaylist(newPID){
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + getToken()
         },
-        data:JSON.stringify(trackObj),
+        data:JSON.stringify(postAbleTracks),
         success: function(responce){
             console.log(responce);
         },
@@ -203,6 +208,16 @@ function saveSession(){
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
             
+        }
+    })
+
+    // Create all the track objects
+    $.ajax({
+        mathod: "POST",
+        url: 'ajax_new_tracks',
+        async: false,
+        data: {
+
         }
     })
 }

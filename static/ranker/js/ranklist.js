@@ -135,12 +135,9 @@ function searchRequest(){
                 // AUTHORIZE WITH VISITOR FOR NEW SEARCH TOKEN 
 
             // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
             authorizeVisitor();
-            // searchRequest();
             
         }
-
         
     })
 }
