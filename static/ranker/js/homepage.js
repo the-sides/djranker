@@ -62,6 +62,7 @@ function getPlaylist(offset){
     $.ajax({
         method: "GET",
         url: URL,
+        async: false,
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -161,7 +162,8 @@ function fillNewPlaylist(newPID){
             console.log(trackObj);
         },
         error : function(xhr){
-            console.log("Selected playlist could not be found again?")
+            console.log("Selected playlist could not be found again?\
+                Fuck if I know man... Read the following log")
             console.log(xhr.status + ': ' + xhr.responseText)
         }
     })
@@ -193,6 +195,22 @@ function saveSession(){
     
     console.log("Playlist saved in database:", ajax_post['puri'])
     ajax_post['token'] = getToken()
+
+    // Create all the track objects
+    // console.log(JSON.stringify(trackObj))
+    $.ajax({
+        method: "POST",
+        url: 'ajax_new_track_load',
+        async: false,
+        data: {data:JSON.stringify(trackObj)},
+        success: function(data){
+            console.log(data, "pfft whatever")
+        },
+        error: function(data){
+            console.log("Did not work", data)
+        }
+    })
+
     // Create session model
     $.ajax({
         method: "POST",
@@ -208,16 +226,6 @@ function saveSession(){
         error : function(xhr, errmsg, err,json){
             console.log(xhr.status + ': ' + xhr.responseText)
             
-        }
-    })
-
-    // Create all the track objects
-    $.ajax({
-        mathod: "POST",
-        url: 'ajax_new_tracks',
-        async: false,
-        data: {
-
         }
     })
 }
@@ -332,7 +340,7 @@ $(document).ready(function(){
             uniqueSidCheck()  // FIXME: Assume sids will be unique FOR NOW 
             newPlaylist()
             // if(window.ajax_post['puri'].length == 22) fillNewPlaylist();
-            // saveSession()
+            saveSession()
 
             console.log("Party Name: ", ajax_post['pname'],"Session ID: ", ajax_post['sid'])
         }

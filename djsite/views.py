@@ -39,10 +39,16 @@ def ajax_new_session(request):
 
 # new_track_load will be a large collection of tracks, called once 
 #   for the start of a new session, importing base playlist
-# @require_POST
-# def ajax_new_track_load(request):
-#     responce_data = {'results':False}
-#     if request.method == 'POST':
-#         try: 
-#             ajax_data = json.loads(request.POST.get('data'))
-#             for 
+@require_POST
+def ajax_new_track_load(request):
+    responce_data = {'results':False}
+    if request.method == 'POST':
+        try:
+            # print(json.loads(request.POST.get('data')))
+            ajax_data = json.loads(request.POST.get('data'))
+            print(ajax_data)
+            # type(ajax_data)
+            # for 
+            responce_data['result'] = True
+        except Exception as error: print(error)
+    return JsonResponse(responce_data, safe=False)
