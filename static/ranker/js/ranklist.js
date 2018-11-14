@@ -12,8 +12,7 @@ $.ajaxSetup({
 }); 
 
 
-function refreshRanklist(sid){
-    // var rv = ""
+function LAMErefreshRanklist(sid){  //depreciated
     $.ajax({
         method: "GET",
         url: 'ajax_refresh_ranklist/'+sid,
@@ -27,19 +26,51 @@ function refreshRanklist(sid){
     })
 }
 
-function spotifyCallToken(type,value){
-    // Universal function for making spotify calls while refreshing the session's token 
-    //   for the next user's call
+// The function above BUT IT'S A FUCKING PROMISE NOW to stop XML warning.
+function refreshRanklist(sid){
+    return new Promise(function(resolve, reject){
+        $.ajax({
+            method: "GET",
+            url: 'ajax_refresh_ranklist/'+sid,
+            success : function(json){
+                resolve(JSON.parse(json.song_requests))
+                // rv = json['token']
+            },
+            error : function(xhr, errmsg, err,json){
+                console.log(xhr.status + ': ' + xhr.responseText)
+                reject(null)
+            }
+        })
 
-    // Get latest token and error check
-    var token = getToken(sid);
-    if(token != -1){
-        // Make spotify call, POSTing new token
-        // after token is guarenteed
-        if(spotifyCall(type,value) == -1){
-            
-        }
+    })
+}
+
+// Should not be a resort, but necessary for old sessions. 
+//   perhaps write a cookie with the host including a time on 
+//   when the host's code expires and visitors will need to 
+//   authorize their accounts to make requests
+//                             that or find permanent authorization
+function authorizeVisitor(){
+    var token;
+    let scopes = [
+            'user-modify-playback-state',
+            'playlist-read-private',
+            'playlist-modify-public',
+            'playlist-read-collaborative',
+            'user-read-currently-playing',
+            'user-read-playback-state'
+        ];
+    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
+    // popup = window.open("http://localhost:8000/authenticate")
+    function receiveMessage(event){
+        console.log(event.data);
+        window.token = event.data;
+        popup.close()
+        searchRequest();
+        // Boom, we have a token, post to DB? Or use for local session
     }
+    window.addEventListener("message", receiveMessage, false)
+    
 }
 
 function getToken(sid){
@@ -87,29 +118,21 @@ function spotifyCall(type,value){
     })
 }
 
-function authorizeVisitor(){
-    var token;
-    let scopes = [
-            'user-modify-playback-state',
-            'playlist-read-private',
-            'playlist-modify-public',
-            'playlist-read-collaborative',
-            'user-read-currently-playing',
-            'user-read-playback-state'
-        ];
-    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
-    // popup = window.open("http://localhost:8000/authenticate")
-    function receiveMessage(event){
-        console.log(event.data);
-        window.token = event.data;
-        popup.close()
-        searchRequest();
-        // Boom, we have a token, post to DB? Or use for local session
+function spotifyCallToken(type,value){
+    // Universal function for making spotify calls while refreshing the session's token 
+    //   for the next user's call
+
+    // Get latest token and error check
+    var token = getToken(sid);
+    if(token != -1){
+        // Make spotify call, POSTing new token
+        // after token is guarenteed
+        if(spotifyCall(type,value) == -1){
+            
+        }
     }
-    window.addEventListener("message", receiveMessage, false)
-
-
 }
+
 
 function searchRequest(){
     searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
@@ -175,13 +198,24 @@ function displayResults(){
         console.log(song.name, " - ", song.artists[0].name)
     }
 }
+
+//===============  GLOBALS  ===============//
 var sid = window.location.href.substr(-6)
 window.token = getToken(sid);
 var results = {};
+var latestRanklist = {};
 
+//===========  RUNTIME EVENTS =============//
 $(document).ready(function(session){ 
     // Upon launch,
     //   optain sid while recieving token, playlist ID ('puri'), and party name
+    refreshRanklist(sid).then(function(data){
+        latestRanklist = data;
+        console.log(latestRanklist)
+    }).catch(function(){
+        $('.ranklist-body').text("Ranklist was not found")
+    })
+    console.log("Ranklist:\n",latestRanklist)
     
     // Results are accessable globally
     // Search process functions
@@ -204,11 +238,12 @@ $(document).ready(function(session){
         // $.ajax({
         //     // I'm not sure if this should be done with a curl call
         // })
-        var codeInd = window.location.href.indexOf("=")
-        var codeEndInd = window.location.href.indexOf("&",codeInd)
-        var token = window.location.href.substring(codeInd+1,codeEndInd)
+        // var codeInd = window.location.href.indexOf("=")
+        // var codeEndInd = window.location.href.indexOf("&",codeInd)
+        // var token = window.location.href.substring(codeInd+1,codeEndInd)
         // saveToken(token,session)
-        console.log(session.token)
+        // console.log(session.token)
+        window.token = getToken(sid)
     })
 
     $('#start-session').click(function(session){

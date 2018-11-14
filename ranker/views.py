@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
+from django.core import serializers
 import json
 
 from ranker.models import *
@@ -29,10 +30,15 @@ def ajax_refresh_ranklist(request,sid):
         try:
             # song_requests = track()
             # song_requests = track.objects.get(session_id=sid)
-            return JsonResponse({'result': False})
             
             # Find out how to check if tracks exist first!
-            responce_data['song_requests'] = track.objects.get(session_id=sid)
+            sesh_tracks = track.objects.all().filter(session_id=sid)
+            print(type(sesh_tracks))
+            # print(json.dumps(sesh_tracks))
+            # responce_data['song_requests'] = json.dumps(sesh_tracks[0])
+            responce_data['song_requests'] = serializers.serialize("json",sesh_tracks)
+            # type(responce_data['song_requests'])
+            # print(responce_data['song_requests'])
 
             responce_data['result'] = True
         except Exception as error: responce_data['result'] = error
