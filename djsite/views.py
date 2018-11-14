@@ -46,9 +46,21 @@ def ajax_new_track_load(request):
         try:
             # print(json.loads(request.POST.get('data')))
             ajax_data = json.loads(request.POST.get('data'))
-            print(ajax_data)
             # type(ajax_data)
-            # for 
+            print(len(ajax_data['tracks']))
+            for ind in ajax_data['tracks']:
+                newTrack = track()
+                print("======================")
+                newTrack.session_id = ajax_data['session_id']
+                print(ajax_data['tracks'][ind]['name'])
+                newTrack.name = ajax_data['tracks'][ind]['name'] 
+                print(ajax_data['tracks'][ind]['uri'])
+                newTrack.uri = ajax_data['tracks'][ind]['uri'] 
+                print(ajax_data['tracks'][ind]['artist'])
+                newTrack.artist = ajax_data['tracks'][ind]['artist'] 
+                print(ajax_data['tracks'][ind]['album_img'])
+                newTrack.album_img = ajax_data['tracks'][ind]['album_img'] 
+                newTrack.save()
             responce_data['result'] = True
         except Exception as error: print(error)
     return JsonResponse(responce_data, safe=False)

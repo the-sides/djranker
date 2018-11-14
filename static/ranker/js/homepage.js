@@ -147,10 +147,10 @@ function fillNewPlaylist(newPID){
             trackObj = {"session_id" : ajax_post['sid'],
                         "tracks":{}
                     }
-            singleTrack = {}  // These will fill trackObj.tracks
 
             for(let i = 0; i < result.total; i++){
                 console.log(result.items[i].track.name)
+                singleTrack = {}  // These will fill trackObj.tracks
                 singleTrack['name'] = result.items[i].track.name
                 singleTrack['uri'] = result.items[i].track.uri
                 singleTrack['artist'] = result.items[i].track.artists[0].name
