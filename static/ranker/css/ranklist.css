@@ -34,12 +34,20 @@ tr{
     /* margin-right:5em; */
 }
 
+.node-item{
+    /* margin: 18px; */
+}
+
 .album-img{
     float: left;
+    width: 64px;
+    height: 64px;
+    margin:18px;
 }
 .song_description{
-    /* display: inline-block; */
-
+    /* display: flex; */
+    max-width:45%;
+    z-index: 1;
     text-align:left;
     /* top: 20px; */
     padding-top: 16px;
@@ -50,27 +58,33 @@ tr{
     /* margin: auto 0; */
 }
 
-.node-item{
-    width: 52px;
-    height: 52px;
-    background-color: grey;
-    margin: 18px;
-    
+.vote-panel{
+    /* z-index: 1;
+    float: right; */
+    display:block;
 }
 
 .vote-btn{
-    margin-left: 0;
+    width: 64px;
+    height: 80px;
     float:right;
-    border-radius:100%;
-    line-height: 52px;
+    border-radius:20%;
+    line-height: 48px;
     text-align: center;
     font-size: 36px;
+    background-color: #c44e18;
 }
+.vote-btn:hover{
+    background-color:rgb(83, 83, 83)
+}
+/* .vote-btn:active{
+    background-color:red
+} */
 
 .score{
     float: right;
-    line-height: 72px;
-    margin-right: 8px;
+    line-height: 2.8em;
     text-align: center;
     font-size: 2em;
+    width: 35px;
 }

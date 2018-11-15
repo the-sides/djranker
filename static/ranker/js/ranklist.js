@@ -215,9 +215,11 @@ function displayRanklist(trackLoad){
         desc.append($("<br>"))
         desc.append($("<span>"/*, {"class": "desc"}*/).text(trackLoad[i].fields.artist))
         node.append(desc)
-        node.append($("<div>", {"class":"vote-btn node-item"}).text("-"))
-        node.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score))
-        node.append($("<div>", {"class":"vote-btn node-item"}).text("+"))
+        let vote_panel = $("<div>", {"class":"vote-panel"})
+        vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("-"))
+        vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("+"))
+        vote_panel.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score))
+        node.append(vote_panel)
         $("#ranklist-body").append(node)
                 
     }
@@ -314,4 +316,16 @@ $(document).ready(function(session){
         //  Host can enable point numbers  
         //    
     // The moment a song is request...
+
+    // Vote Buttons
+    $('#ranklist-body').on('click','.vote-btn',function(){
+        // Check cookie for what's already been voted on.
+        //   More needs to go into cookies to save long term
+        // window.cookie = {"foo":"bar"}
+        console.log(window.cookie)
+        if($(this).css("background-color") != "rgb(255, 165, 0)")
+            $(this).css("background-color","orange");
+        else
+            $(this).css("background-color","grey");
+    })
 })
