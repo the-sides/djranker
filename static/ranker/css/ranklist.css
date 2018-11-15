@@ -1,12 +1,13 @@
 
 #container{
-    margin: auto;
-    width: 70%;
+    margin: 1em;
+    /* width: 95%; */
     text-align: center;
 }
 #btn-header{
     margin: 1em 0;
     background-color:grey;
+    border-radius: 6px;
 }
 #drop-results{
     display:none;
@@ -14,10 +15,62 @@
     background-color: #4c4c4c;
     margin: 1em 0;
 }
+
+/* Search Results */
 th{
     min-width: 200px;
     text-align:left;
 }
 tr{
     background-color: blue
+}
+
+/* Ranklist Nodes */
+.track-node{
+    height:100px;
+    background-color: #282a36;
+    border-radius: 6px;
+    margin: 1em 0;
+    /* margin-right:5em; */
+}
+
+.album-img{
+    float: left;
+}
+.song_description{
+    /* display: inline-block; */
+
+    text-align:left;
+    /* top: 20px; */
+    padding-top: 16px;
+    line-height:32px;
+    float: left;
+
+    font-size: 1em;
+    /* margin: auto 0; */
+}
+
+.node-item{
+    width: 52px;
+    height: 52px;
+    background-color: grey;
+    margin: 18px;
+    
+}
+
+.vote-btn{
+    margin-left: 0;
+    float:right;
+    border-radius:100%;
+    line-height: 52px;
+    text-align: center;
+    font-size: 36px;
+}
+
+.score{
+    float: right;
+    line-height: 72px;
+    margin-right: 8px;
+    text-align: center;
+    font-size: 2em;
 }

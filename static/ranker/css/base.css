@@ -1,6 +1,6 @@
 html, body {
     margin: 0; 
-    background-color:rgb(34, 34, 34);
+    background-color:#141516;
     color: white;
     font-family: 'Play', sans-serif;
 }
@@ -33,6 +33,7 @@ button{
     font-weight: 200;
     font-family: 'Play', sans-serif;
 }
+
 h1{
     font-weight: 200;
     font-size: 3em;
@@ -41,5 +42,4 @@ h1{
     padding-left: 1em;
     margin: 0;
     min-width: 210px; /* keeps from line seperating title */
-
 }

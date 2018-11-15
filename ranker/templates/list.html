@@ -4,6 +4,7 @@
         <title> Ranking List </title>
         <link rel="stylesheet" href="{% static 'ranker/css/ranklist.css' %}">
         <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}">
+        <link rel="shortcut icon" type="image/png" href="{% static 'ranker/img/icon.png' %}"/>
         <script src="{% static 'ranker/js/jquery-3.3.1.min.js' %}"></script>
         <script src="{% static 'ranker/js/ranklist.js' %}"></script>
         <!-- <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/> -->
@@ -36,6 +37,18 @@
                     <!-- <tr> has id="track0" index-based track[id] -->
                     </tbody>
                 </table>
+            </div>
+            <div id="ranklist-body">
+                <div class="track-node">
+                    <img class="album-img node-item" src="https://i.scdn.co/image/7874127e74a4e7b5e7723804c7b99f0896062528"/>
+                    <div class="song_description">
+                        <span> name <br> artist </span>
+                    </div>
+                    <div class="vote-btn node-item">-</div>
+                    <!--     DO SCORES DIFFERENTLY     -->
+                    <!-- <span class="score note-item">score</span> -->
+                    <div class="vote-btn node-item">+</div>
+                </div>
             </div>
         </div>
     </body>

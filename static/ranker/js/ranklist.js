@@ -166,15 +166,18 @@ function searchRequest(){
 }
 
 function saveResults(data){
-    $(".result").remove();  // Existing search items
+    // I moved clearing the original results $(".result").remove() from here to displayResults init
     results = data;
 }
 
-function clearResults(){
+function hideResults(){
     $("#drop-results").css("display","none")
 }
 
 function displayResults(){
+    // Remove existing search items
+    $(".result").remove();  // Existing search items
+
     // At this point, the result variable is filled with 10 tracks as an object
     // Prompt the user to pick one of the tracks to be requested
     $("#drop-results").css("display","block")
@@ -199,6 +202,27 @@ function displayResults(){
     }
 }
 
+function displayRanklist(trackLoad){
+    //Define ranklist-node
+    
+    console.log("Songs on ranklist", trackLoad.length)
+    for(let i = 0; i < trackLoad.length; i++){
+        let node = $("<div>", {"class" : "track-node"});
+        node.append($("<img>", {"class":"album-img node-item","src":trackLoad[i].fields.album_img}))
+        let desc = $("<div>", {"class":"song_description"})
+        // desc.append($("<span>").text(trackLoad[i].fields.name + "<br>" + trackLoad[i].fields.artist ))
+        desc.append($("<span>", {"class": "desc"}).text(trackLoad[i].fields.name))
+        desc.append($("<br>"))
+        desc.append($("<span>"/*, {"class": "desc"}*/).text(trackLoad[i].fields.artist))
+        node.append(desc)
+        node.append($("<div>", {"class":"vote-btn node-item"}).text("-"))
+        node.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score))
+        node.append($("<div>", {"class":"vote-btn node-item"}).text("+"))
+        $("#ranklist-body").append(node)
+                
+    }
+}
+
 //===============  GLOBALS  ===============//
 var sid = window.location.href.substr(-6)
 window.token = getToken(sid);
@@ -209,14 +233,23 @@ var latestRanklist = {};
 $(document).ready(function(session){ 
     // Upon launch,
     //   optain sid while recieving token, playlist ID ('puri'), and party name
+
+    // =================== UPDATE RANKLIST =========================//
     refreshRanklist(sid).then(function(data){
+        if(data.length == 0){ 
+            $('#ranklist-body').text("Ranklist will start once request have been made")
+            return
+        }
         latestRanklist = data;
         console.log(latestRanklist)
+        displayRanklist(latestRanklist)
     }).catch(function(){
-        $('.ranklist-body').text("Ranklist was not found")
+        $('#ranklist-body').text("Ranklist was not found")
     })
     console.log("Ranklist:\n",latestRanklist)
-    
+   //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^// 
+
+   
     // Results are accessable globally
     // Search process functions
 
@@ -224,9 +257,10 @@ $(document).ready(function(session){
 
     //Used once a request is submitted
     $('#drop-results').on('click','.requested',function(){
-        clearResults();
+        hideResults();
         console.log("Requests hidden")
     })
+    
     // Used to hide results from a search       WHAT? NOT DONE? I THOUGHT IT WORKED
     // $('#hide-results').click()
     //Research JS scopes on global variables. By-reference or by-value? Passing parameters or otherwise?
