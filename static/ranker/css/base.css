@@ -26,9 +26,10 @@ a{
     text-decoration: none;
     color: white;
 }
-p{
+/* p{  delete after checking with ranklist
     color:rgb(255, 234, 208);
-}
+} */
+
 button{
     font-weight: 200;
     font-family: 'Play', sans-serif;

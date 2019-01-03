@@ -34,15 +34,16 @@ tr{
     /* margin-right:5em; */
 }
 
-.node-item{
-    /* margin: 18px; */
-}
+/* .node-item{
+    margin: 18px;
+} */
 
 .album-img{
     float: left;
     width: 64px;
     height: 64px;
     margin:18px;
+    margin-left:6px;
 }
 .song_description{
     /* display: flex; */
@@ -51,7 +52,7 @@ tr{
     text-align:left;
     /* top: 20px; */
     padding-top: 16px;
-    line-height:32px;
+    /* line-height:32px; */
     float: left;
 
     font-size: 1em;
@@ -65,8 +66,8 @@ tr{
 }
 
 .vote-btn{
-    width: 64px;
-    height: 80px;
+    width: 32px;
+    height: 40px;
     float:right;
     border-radius:20%;
     line-height: 48px;

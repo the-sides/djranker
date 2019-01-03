@@ -36,13 +36,49 @@ function authorizeHost(offset){
         console.log(event.data);
         window.ajax_post['token'] = event.data;
         popup.close()
+        checkAuthorization();
         if(offset == 0) getPlaylist(offset);
         // Boom, we have a token, post to DB? Or use for local session
     }
     window.addEventListener("message", receiveMessage, false)
 
 }
+function checkAuthorization(){
+    if(window.ajax_post['token'].length > 1){
+        // Hide Authorization button
+        // Show playlists and session info input
+        $("#autho-panel").slideUp(400)
+        $("#session-panel").slideDown(400)
+        // If there is a user, display information
+        displayUserInformation()
+        console.log("Autho token here")
+    }
+    else{
+        $("#autho-panel").slideDown(400)
+        $("#session-panel").slideUp(400)
+        console.log("No autho token here")
+    }
+}
 
+function displayUserInformation(){
+    $.ajax({
+        method: "GET",
+        url: "https://api.spotify.com/v1/me",
+        async: false,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken(),
+        },
+        success : function(json){
+            console.log(json.display_name)
+            $("#welcome-name").text("Welcome, " + json.display_name)
+        },
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ': ' + xhr.responseText); 
+        }
+    })
+}
 
 
 function getPlaylist(offset){
@@ -232,7 +268,8 @@ function saveSession(){
 
 
 $(document).ready(function(){
-    
+    // Check for authorization
+    checkAuthorization()
     $('#host-btn').click(function(){
         // Open or close dropdown-session-options
         $("#dropdown-session-options").slideToggle(400)

@@ -1,89 +1,98 @@
 {% load staticfiles %}
 <html>
-    <head>
-        <title>HOMEPAGE</title>
-        <link rel="stylesheet" href="{% static 'ranker/css/homepage.css' %}"/>
-        <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}"/>
-        <link rel="shortcut icon" type="image/png" href="{% static 'ranker/img/icon.png' %}"/>
-        <!-- <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/> -->
-        <script src="{% static 'ranker/js/jquery-3.3.1.min.js' %}"></script>
-        <script src="{% static 'ranker/js/homepage.js' %}"></script>
+<head>
+    <title>HOMEPAGE</title>
+    <link rel="stylesheet" href="{% static 'ranker/css/base.css' %}"/>
+    <link rel="stylesheet" href="{% static 'ranker/css/homepage.css' %}"/>
+    <link rel="shortcut icon" type="image/png" href="{% static 'ranker/img/icon.png' %}"/>
+    <!-- <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/> -->
+    <script src="{% static 'ranker/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'ranker/js/homepage.js' %}"></script>
 
-        {% csrf_token %}
-        <script type="text/javascript">
-        // using jQuery
-        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-        </script>
+    {% csrf_token %}
+    <script type="text/javascript">
+    // using jQuery
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    </script>
 
-        <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet"/> 
-        <!-- <link href="https://fonts.googleapis.com/css?family=Play|Rajdhani|Sarpanch|VT323" rel="stylesheet">  -->
-        <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet"> 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div id="header-container">
-            <h1>DJ Ranker</h1>
-            <div id="header-content">
-                <p style="border-left:2px solid black;padding-left:3px;">About</p>
-                <p style="
-                    float: right;
-                    ">"For people with stupid music"</p>
-            </div>
+    <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet"/> 
+    <!-- <link href="https://fonts.googleapis.com/css?family=Play|Rajdhani|Sarpanch|VT323" rel="stylesheet">  -->
+    <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+    <div id="header-container">
+        <h1>DJ Ranker</h1>
+        <div id="header-content">
+            <p style="border-left:2px solid black;padding-left:3px;">About</p>
+            <p style="
+                float: right;
+                ">"For people with stupid music"</p>
         </div>
-        <div id="content-container">
-            <div id="options-grid">
+    </div>
+    <div id="content-container">
+        <div id="options-grid">
 
-                <button id="host-btn" class="options">HOST</button>
-                <p>OR</p>
-                <button id="join-btn" class="options">JOIN</button>
-                
-                <p>Host a party</p>
-                <div> <!-- Filler for the grid --> </div>
-                <p>Join to request</p>
-
+            <button id="join-btn" class="options">JOIN</button>
+            <p>OR</p>
+            <button id="host-btn" class="options">HOST</button>
             
-            </div>
+            <p>Join to request</p>
+            <div> <!-- Filler for the grid --> </div>
+            <p>Host a party</p>
 
-            <div id="dropdown-session-options" class="row">
-                
-                <p> 1) Authorize the hosting Spotify account: </p>
-                <button id="autho-btn"> Authorize </button>
-                <br>
-                <p> 2) Set party name and the link for guests</p>
-                <br>
-                <div class="input-field">
-                    <label for="party-name">Party Name</label>
-                    <input placeholder="Smith House Party" id="party-name" type="text">
-                    <br>
-                    <label for="sid-name">6 digit identifier</label>
-                    <input placeholder="1a2b3c" id="sid-name" type="text">
-                </div>
-                <br>
-
-                <p> 3) DJ set list will copy and start with:  <p id="pstatus"></p> </p>
-                <br>
-                <button id="playlist-btn"> YOUR PLAYLIST </button>
-                    <p> or </p> 
-                <button id="blanklist-btn"> EMPTY PLAYLIST </button> 
-                
-                <div id='user-playlists'>
-                    <table>
-                        <thead>
-                            <th>Playlist name</th>
-                            <th>Song count</th>
-                            <th> </th>
-                        </thead>
-                        <tbody id='playlist-body'>
-                        </tbody>
-                    </table>
-                    <button id="prev-playlists">prev</button>
-                    <button id="next-playlists">next</button>
-                </div>
-                <br>
-                <button class="col s2 options" id="start-btn">Start</button>
-
-            </div>
+        
         </div>
-        <script src="{% static 'ranker/js/materialize.js' %}"></script>
-    </body>
+
+        <div id="dropdown-session-options" class="row">
+            <div id="autho-panel">
+                <h3> Connect the hosting Spotify account: </h3>
+                <button id="autho-btn" class="options"> Authorize </button>
+                <br>
+            </div>
+            <div id="session-panel">
+                <h3 id="welcome-name"></h3>
+                <div id="session-grid">
+                    <div class="grid-item"> 
+                        <p>DJ set list will copy and start with:  <p id="pstatus"></p> </p>
+                        <button id="playlist-btn"> YOUR PLAYLIST </button>
+                            <p> or </p> 
+                        <button id="blanklist-btn"> EMPTY PLAYLIST </button> 
+                        
+                        <div id='user-playlists'>
+                            <table>
+                                <thead>
+                                    <th>Playlist name</th>
+                                    <th>Song count</th>
+                                    <th> </th>
+                                </thead>
+                                <tbody id='playlist-body'>
+                                </tbody>
+                            </table>
+                            <button id="prev-playlists">prev</button>
+                            <button id="next-playlists">next</button>
+                        </div>
+                    </div>
+                    <div class="grid-item">
+                        <p>Set party name and the link for guests</p>
+                        <div class="input-field">
+                            <label for="party-name">Party Name</label>
+                            <input placeholder="Smith House Party" id="party-name" type="text">
+                            <br>
+                            <label for="sid-name">6 digit identifier</label>
+                            <input placeholder="1a2b3c" id="sid-name" type="text">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <button class="options" id="start-btn">Start</button>
+
+            </div>
+
+        </div>
+    </div>
+    <script src="{% static 'ranker/js/materialize.js' %}"></script>
+</body>
 </html>
