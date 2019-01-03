@@ -208,6 +208,7 @@ function displayRanklist(trackLoad){
     console.log("Songs on ranklist", trackLoad.length)
     for(let i = 0; i < trackLoad.length; i++){
         let node = $("<div>", {"class" : "track-node"});
+        // node.append($("<p>", {"class":"score"}).text("0"))
         node.append($("<img>", {"class":"album-img node-item","src":trackLoad[i].fields.album_img}))
         let desc = $("<div>", {"class":"song_description"})
         // desc.append($("<span>").text(trackLoad[i].fields.name + "<br>" + trackLoad[i].fields.artist ))
@@ -215,10 +216,10 @@ function displayRanklist(trackLoad){
         desc.append($("<br>"))
         desc.append($("<span>"/*, {"class": "desc"}*/).text(trackLoad[i].fields.artist))
         node.append(desc)
+        node.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score))
         let vote_panel = $("<div>", {"class":"vote-panel"})
-        vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("-"))
-        vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("+"))
-        vote_panel.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score))
+        vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("+").val(false))
+        vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("-").val(false))
         node.append(vote_panel)
         $("#ranklist-body").append(node)
                 
@@ -317,15 +318,22 @@ $(document).ready(function(session){
         //    
     // The moment a song is request...
 
+    // Load user votes based on device uniqueness. Vote default val = false
+
     // Vote Buttons
     $('#ranklist-body').on('click','.vote-btn',function(){
         // Check cookie for what's already been voted on.
         //   More needs to go into cookies to save long term
         // window.cookie = {"foo":"bar"}
-        console.log(window.cookie)
-        if($(this).css("background-color") != "rgb(255, 165, 0)")
-            $(this).css("background-color","orange");
-        else
-            $(this).css("background-color","grey");
+        if($(this).val() == "false"){
+            // Verify that only one vote-btn is pressed
+            if($(this).siblings().val() == "true"){
+                $(this).siblings().val(false).removeAttr("style");
+            }
+            $(this).val(true).css("background-color","rgba(255, 98, 25, 0.748)");
+        }
+        else{
+            $(this).val(false).removeAttr("style");
+        }
     })
 })
