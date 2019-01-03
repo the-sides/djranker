@@ -51,6 +51,7 @@ function checkAuthorization(){
         $("#session-panel").slideDown(400)
         // If there is a user, display information
         displayUserInformation()
+        requestPlaylists()
         console.log("Autho token here")
     }
     else{
@@ -80,8 +81,30 @@ function displayUserInformation(){
     })
 }
 
+function requestPlaylists(){
+    if (getToken() == -1){
+        window.alert("Authorize your Spotify account first, silly goose");
+        return -1;
+    }
+
+    $('#user-playlists').slideDown(200)
+    
+    // If the results have been pressed on a previous click, don't bother again.
+    if(!$('.result').length){
+        getPlaylist(offset)
+    }
+
+    // State maintanance
+    if(ajax_post['puri'].length !== 22){
+    // Don't state that you are about to choose if you already picked playlist
+    // Prevents user from picking, clicking fresh, then going back to picked. 
+        ajax_post['puri'] = "choose"
+    }
+    else $('#pstatus').text("YOUR PLAYLIST")
+}
 
 function getPlaylist(offset){
+    $("#playlist-status").show()
     if(window.ajax_post['token'] == ""){
         authorizeHost(offset);
         return; // With an offset, authorizeHost will getPlaylist
@@ -124,13 +147,15 @@ function showPlaylistsList(json){
         playlist = json.items[i]
         $('#playlist-body').append("<tr></tr>")
         cell = $('tr:last')
-        cell.append("<td>"+playlist.name+"</td>")
+        cell.append("<td class='queue"+i+"'>"+playlist.name+"</td>")
         cell.append("<td>"+playlist.tracks.total+"</td>")
-        cell.append("<td><button id='queue"+i+"'>QUEUE</button></td>")
+        // cell.append("<td class='queue"+i+"'>"+playlist.tracks.total+"</td>")
+        // cell.append("<td><button id='queue"+i+"'>QUEUE</button></td>")
         // The button will request details corresponding to the <tr> parent
         cell.addClass("result").attr("id","playlist"+i)
         console.log(playlist.name, " - ", playlist.tracks.total)
     }
+    $("#playlist-status").hide()
 }
 
 function uniqueSidCheck(){ return }
@@ -270,6 +295,8 @@ function saveSession(){
 $(document).ready(function(){
     // Check for authorization
     checkAuthorization()
+    $("#playlist-status").hide()
+
     $('#host-btn').click(function(){
         // Open or close dropdown-session-options
         $("#dropdown-session-options").slideToggle(400)
@@ -277,7 +304,8 @@ $(document).ready(function(){
 
     $('#autho-btn').click(authorizeHost)
     
-    $('#playlist-btn').click(function(){
+    $('#playlist-btn').click(requestPlaylists)
+    function requestPlaylists(){
         if (getToken() == -1){
             window.alert("Authorize your Spotify account first, silly goose");
             return -1;
@@ -297,7 +325,7 @@ $(document).ready(function(){
             ajax_post['puri'] = "choose"
         }
         else $('#pstatus').text("YOUR PLAYLIST")
-    })
+    }
     
 
     // Playlist Selection buttons

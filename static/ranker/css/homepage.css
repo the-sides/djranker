@@ -2,14 +2,13 @@
 #options-grid{
     display: grid;
     grid-template-columns: 200px auto 200px;
-    margin: 50px auto;
+    margin: 12px auto;
     max-width: 500px;
 }
 
 #options-grid > p{
     text-align:center;
 }
-
 .options{
     /* max-width: 300px; */
     color: rgb(255, 245, 190);
@@ -35,19 +34,36 @@
 }
 #user-playlists{
     display:none;
+    border:solid #c44e18 2px;
+    max-height: 540px;
+    /* min-width: 340px;/* for button 20% padding */
+    overflow: scroll;
+}
+#user-playlists > button{
+    font-size: 1em;
+    padding: 5px 10%;
+    margin:auto;
+}
+#playlist-status{
+    display:inline;
+    font-size:20px;
+}
+#playlist-body{
+    background-color: #252422
+}
+#playlist-body td[class^="queue"]{
+    width:100%;
+}
+#playlist-body td[class^="queue"]:hover{
+    background-color:#3d3c38;
 }
 table{
     margin:auto;
     text-align: center
 }
 .input-field{
-    display:inline;
-}
-label{
-    margin-left: 2em;
-}
-input{
-    margin-bottom: 1em ;
+    display:grid;
+    grid-column-gap: 1em;
 }
 
 p{
@@ -61,7 +77,6 @@ p{
 #dropdown-session-options{
     /* display: none; */
     margin: auto;
-    width:75%;
     text-align:center;
 }
 
@@ -81,6 +96,7 @@ p{
 #session-grid{
     display:grid;
     grid-template-columns: auto auto;
+    grid-column-gap: 24px;
 }
 #start-btn{
     margin: 2em 0;
@@ -105,7 +121,7 @@ p{
         margin:10px 5%;
     }
     #options-grid{
-        margin: 36px auto;
+        margin: 12px auto;
         text-align: center;
         grid-template-columns: auto;
     }

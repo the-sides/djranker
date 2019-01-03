@@ -31,6 +31,7 @@
         </div>
     </div>
     <div id="content-container">
+    <h3 id="intro-message">How are you partying tonight?</h3>
         <div id="options-grid">
 
             <button id="join-btn" class="options">JOIN</button>
@@ -55,22 +56,23 @@
                 <div id="session-grid">
                     <div class="grid-item"> 
                         <p>DJ set list will copy and start with:  <p id="pstatus"></p> </p>
-                        <button id="playlist-btn"> YOUR PLAYLIST </button>
+                        <!-- <button id="playlist-btn"> YOUR PLAYLIST </button>
                             <p> or </p> 
-                        <button id="blanklist-btn"> EMPTY PLAYLIST </button> 
+                        <button id="blanklist-btn"> EMPTY PLAYLIST </button>  -->
                         
                         <div id='user-playlists'>
                             <table>
                                 <thead>
-                                    <th>Playlist name</th>
-                                    <th>Song count</th>
+                                    <th>Playlist</th>
+                                    <th>Songs</th>
                                     <th> </th>
                                 </thead>
                                 <tbody id='playlist-body'>
                                 </tbody>
                             </table>
-                            <button id="prev-playlists">prev</button>
-                            <button id="next-playlists">next</button>
+                            <button id="prev-playlists" class="options">prev</button>
+                            <p id="playlist-status">loading</p>
+                            <button id="next-playlists" class="options">next</button>
                         </div>
                     </div>
                     <div class="grid-item">
