@@ -11,6 +11,15 @@ $.ajaxSetup({
     }
 }); 
 
+function compare(a, b){
+    const scoreA = a.fields.score
+    const scoreB = b.fields.score
+
+    let comparison = 0;
+    if(scoreA > scoreB) comparison = -1;
+    if(scoreA < scoreB) comparison = 1;
+    return comparison
+}
 
 function LAMErefreshRanklist(sid){  //depreciated
     $.ajax({
@@ -134,6 +143,7 @@ function spotifyCallToken(type,value){
 }
 
 
+// Search AJAX call
 function searchRequest(){
     searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
     console.log("New search for ", searchStr);
@@ -191,20 +201,42 @@ function displayResults(){
 
         //   FIXME:
         // Check if should be #result-body
-        $('#result-table').append("<tr></tr>")
+        $('#result-body').append("<tr></tr>")
         cell = $('tr:last')
         cell.append("<td>"+song.name+"</td>")
         cell.append("<td>"+song.artists[0].name+"</td>")
-        cell.append("<td><button class='requested'>REQUEST</button></td>")
-        // The button will request details corresponding to the <tr> parent
-        cell.addClass("result").attr("id","track"+i)
+        cell.append($("<td>").text(song.duration_ms))
+        cell.addClass("result").attr("id","searchedTrack"+i)
         console.log(song.name, " - ", song.artists[0].name)
     }
 }
 
+function addTrackToPlaylist(trackUri){
+    $.ajax({
+        method:"POST",
+        url: "https://api.spotify.com/v1/playlists/"
+            +$("#pid-render").text()
+            +"/tracks?uris="
+            +trackUri,
+        headers: {
+            'Accept': 'application/json' ,
+            'Content-Type': 'application/json',
+            // Token will depend on the user hosting
+            'Authorization': 'Bearer '+ window.token
+        },
+        success : function(responce){
+            console.log(responce)
+        },
+        error : function(responce){
+            console.log(responce)
+        }
+    })
+    return true
+}
+
 function displayRanklist(trackLoad){
-    //Define ranklist-node
-    
+    trackLoad.sort(compare);
+    console.log("sorted",trackLoad)
     console.log("Songs on ranklist", trackLoad.length)
     for(let i = 0; i < trackLoad.length; i++){
         let node = $("<div>", {"class" : "track-node"});
@@ -222,8 +254,30 @@ function displayRanklist(trackLoad){
         vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("-").val(false))
         node.append(vote_panel)
         $("#ranklist-body").append(node)
-                
     }
+
+    //=======================================================
+    //            SERVER SIDE PROCESS
+    // ---    ---    ---   --   ---    ---    ---   ---   ---
+    // manipulateSpotify(trackLoad)
+}
+
+function manipulateSpotify(tracks){
+    // Pull current list
+    // Check for any adds 
+    // Reposition tracks
+
+
+}
+
+function updateScore(track, vote){
+    if(vote == 1){ // Upvote
+
+    }
+    else{          // Downvote
+        
+    }
+
 }
 
 //===============  GLOBALS  ===============//
@@ -259,7 +313,11 @@ $(document).ready(function(session){
 
 
     //Used once a request is submitted
-    $('#drop-results').on('click','.requested',function(){
+    $('#drop-results').on('click','.result',function(){
+        let resultIndex = $(this).attr("id").substr(-1)
+        console.log("Request track index:",resultIndex)
+        console.log(results.tracks.items[resultIndex].name)
+        addTrackToPlaylist(results.tracks.items[resultIndex].uri)
         hideResults();
         console.log("Requests hidden")
     })
@@ -280,7 +338,9 @@ $(document).ready(function(session){
         // var token = window.location.href.substring(codeInd+1,codeEndInd)
         // saveToken(token,session)
         // console.log(session.token)
-        window.token = getToken(sid)
+
+        authorizeVisitor()
+        // window.token = getToken(sid)
     })
 
     $('#start-session').click(function(session){
@@ -295,7 +355,14 @@ $(document).ready(function(session){
         // }
 
     })
+
+    // Search Functionality
     $('#search-btn').click(searchRequest)
+
+    // ~~Enter~~ ANY button within search bar searches. Duh.
+    $('#search-str').keypress(function(event){
+            searchRequest();
+    })
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////         UPDATING SONG QUEUE       /////////////////////////////////////////////////////////

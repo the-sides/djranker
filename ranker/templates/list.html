@@ -13,7 +13,10 @@
     <body>
         <div id="header-container">
             <h1><a href="http://localhost:8000">DJ Ranker</a></h1>
-            <p id="">{{name}}</p>
+            <div id="session-info">
+                <p id="pname-render">{{name}} </p>
+                <p id="pid-render">{{pid}}</p>
+            </div>
         </div>
         <div id="container" >
             <div id="btn-header">
@@ -28,9 +31,7 @@
                     <thead>
                         <th>Track</th>
                         <th>Artist</th>
-                        <!-- <th>Album</th> -->
-                        <!-- <th>Duration</th> -->
-                        <th style="width:20px">Request</th>
+                        <th style="max-width: 32px;">Length</th>
                     </thead>
                     <tbody id="result-body">
                     <!-- Will fill <tr> tags, <td> with details, and <button> to request  -->

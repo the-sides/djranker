@@ -17,7 +17,7 @@ def sessionlist(request,sid):
     print(sesh.name)
     context = {}
     context['sid'] = sesh.sid
-    context["puri"] = sesh.pid
+    context["pid"] = sesh.pid
     context["name"] = sesh.name
     # Token is requested upon call
 
