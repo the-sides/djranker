@@ -176,11 +176,12 @@ function newPlaylist(){
             "public" : true
         }),
         success: function(json){
-            console.log(json.id)
+            console.log("Your new playlist json:", json)
             // If template playlist provided, fill new one here
             if(window.ajax_post['puri'].length === 22) 
                 fillNewPlaylist(json.id);
 
+            window.ajax_post['puri'] = json.id
             console.log("New playlist made: ", ajax_post['puri'], ajax_post['puri'].length)
         },
         error : function(xhr, errmsg, err,json){
@@ -247,8 +248,6 @@ function fillNewPlaylist(newPID){
             console.log(xhr.status + ': ' + xhr.responseText)
         }
     })
-
-    window.ajax_post['puri'] = newPID;
 }
 
 
@@ -265,7 +264,7 @@ function saveSession(){
         async: false,
         data: {data:JSON.stringify(trackObj)},
         success: function(data){
-            console.log(data, "pfft whatever")
+            console.log(data, "pfft whatever, result from django session save")
         },
         error: function(data){
             console.log("Did not work", data)
