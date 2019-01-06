@@ -83,17 +83,57 @@
                             <br>
                             <label for="sid-name">6 digit identifier</label>
                             <input placeholder="1a2b3c" id="sid-name" type="text">
+                            <button class="options" id="start-btn">Start</button>
                         </div>
                     </div>
 
                 </div>
 
 
-                <button class="options" id="start-btn">Start</button>
 
             </div>
 
+
         </div>
+        <div id="intro-description">
+            <p>Welcome to DJ Ranker  (name pending, WePlay?)</p>
+            <p>Imagine a live party playlist where everyone has a voice.
+                Songs may be searched and requested by anyone with a link 
+                at anytime from a single page.
+                <h3>No signup necessary.</h3>
+                Every request will have score and will be open to be voted on. 
+                If your music sucks, thanks to everyone else, we won't have to deal with it. 
+                <br>
+                At -3 points, a requested song will be removed. 
+                As requests score higher than others, the queue is changed while 
+                the songs ranked highest are played next off the top.
+                <h4>RULES:</h4>
+                <ol>
+                    <li>The host must have a Premium Spotify account.</li>
+                    <li>The song after the current will be locked in order for the program to work. Blame Spotify.</li>
+                    <li>The host must not play in shuffled mode and for the time-being, cannot skip songs. 
+                        Refrain from touching the Spotify App as much as possible with the except for volume.</li>
+                </ol>
+                <h4>FEATURES:</h4>
+                <ol>
+                    <li> <strong>Current Song Display: </strong> No more asking what song is playing.</li>
+                    <li><strong>Volume Adjust Request: </strong> Too loud? Not bumping enough? 
+                        Vistors can anonomously request that a volume change is made in either direction 
+                        and the host is able to the stats for either. Doesn't matter they'll do anything about it.
+                        Yes, I made this for you Mikey. </li>
+                    <li> <strong> History and Playlist Link: </strong> Do you ever hear that song that comes up the following day 
+                        which just won't get out of your head? Significantly worse when you didn't know the song to start with.
+                        Take home the playlist with a history lasting 24 hours and a playlist to all the music that was played.  </li>
+                </ol>
+                <h4> Potential Features: </h4>
+                <ol>
+                    <li>Host Moderation:</li>
+                    <li>Live Lyrics:</li>
+                </ol>
+            </p>
+            <p style="text-align:right;">Employer? Please hire me. <a href="https://the-sides.github.io">personal website</a></p>
+        </div>
+
     </div>
     <script src="{% static 'ranker/js/materialize.js' %}"></script>
 </body>
