@@ -67,6 +67,7 @@ function authorizeVisitor(){
             'playlist-modify-public',
             'playlist-read-collaborative',
             'user-read-currently-playing',
+            'user-modify-playback-state',
             'user-read-playback-state'
         ];
     popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
@@ -75,7 +76,7 @@ function authorizeVisitor(){
         console.log(event.data);
         window.token = event.data;
         popup.close()
-        searchRequest();
+        // searchRequest();
         // Boom, we have a token, post to DB? Or use for local session
     }
     window.addEventListener("message", receiveMessage, false)
@@ -92,9 +93,11 @@ function getToken(sid){
         url: 'ajax_get_token/' + sid,
         success : function(json){
             console.log("Ajax get token successooooo", json.token)
+            window.token = json.token
             return json.token;
         },
         error : function(xhr, errmsg, err,json){
+            console.log("Django didn't have a code?")
             console.log(xhr.status + ': ' + xhr.responseText)
             return -1;
         }
@@ -168,7 +171,8 @@ function searchRequest(){
                 // AUTHORIZE WITH VISITOR FOR NEW SEARCH TOKEN 
 
             // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            authorizeVisitor();
+            // authorizeVisitor();
+            getToken()
             
         }
         
@@ -227,11 +231,37 @@ function addTrackToPlaylist(trackUri){
         success : function(responce){
             console.log(responce)
         },
-        error : function(responce){
-            console.log(responce)
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ': ' + xhr.responseText);   
         }
     })
     return true
+}
+
+function refreshPlaylistPlayback(){
+    // Find the position of the users playback to the song
+    //   and that song's duration. Once the song is over, seconds before,
+    //   set them to a new point close to where they are and HOPEFULLY
+    //   the playlist will be updated with added tracks and songs will flow
+    let ajax_data = {
+        "context_uri": "spotify:playlist:"+$('#pid-render').text()
+      }
+    $.ajax({
+        method: "PUT",
+        url: "https://api.spotify.com/v1/me/player/play",
+        headers: {
+            'Accept': 'application/json' ,
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+ window.token
+        },
+        data: JSON.stringify(ajax_data),
+        success: function(res){
+            console.log("We think it worked", res)
+        },
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ': ' + xhr.responseText);   
+        }
+    })
 }
 
 function displayRanklist(trackLoad){
@@ -291,6 +321,7 @@ $(document).ready(function(session){
     // Upon launch,
     //   optain sid while recieving token, playlist ID ('puri'), and party name
 
+    authorizeVisitor()
     // =================== UPDATE RANKLIST =========================//
     refreshRanklist(sid).then(function(data){
         if(data.length == 0){ 
@@ -318,6 +349,10 @@ $(document).ready(function(session){
         console.log("Request track index:",resultIndex)
         console.log(results.tracks.items[resultIndex].name)
         addTrackToPlaylist(results.tracks.items[resultIndex].uri)
+        // Hacky work around. The user needs to be playing from the new 
+        //   snapshot. Analyze and play user within the same context. 
+        refreshPlaylistPlayback()
+        refreshPlaylistPlayback()
         hideResults();
         console.log("Requests hidden")
     })
