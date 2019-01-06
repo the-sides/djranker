@@ -243,9 +243,12 @@ function refreshPlaylistPlayback(){
     //   and that song's duration. Once the song is over, seconds before,
     //   set them to a new point close to where they are and HOPEFULLY
     //   the playlist will be updated with added tracks and songs will flow
+    // ===  STUDY  === //
     let ajax_data = {
         "context_uri": "spotify:playlist:"+$('#pid-render').text()
-      }
+    }
+
+    // ===  and HACK  === //
     $.ajax({
         method: "PUT",
         url: "https://api.spotify.com/v1/me/player/play",
