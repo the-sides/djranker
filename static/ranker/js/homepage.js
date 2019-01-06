@@ -363,9 +363,7 @@ $(document).ready(function(){
         $('#pstatus').text("EMPTY PLAYLIST")
     })
 
-
-
-    $('#start-btn').on('click',function(){
+    function startSession(){
         console.log(getToken());  
         // Authorize account
         // Ask baselist or blank
@@ -379,7 +377,7 @@ $(document).ready(function(){
             window.alert("Enter a party name")
         }
         else if(ajax_post['sid'].length != 6) {
-            window.alert("Pro Tip: Most 6 digit codes are 6 digits in length.");
+            window.alert("Pro Tip: Most 6 lettered codes are 6 letters in length.");
         }
         else if(ajax_post['puri'] == ""){
             // A playlist state hasn't been picked
@@ -390,13 +388,7 @@ $(document).ready(function(){
 
         }        
 
-
-
-
             // CHECK FOR PRE-EXISTING SID
-
-
-
 
             // LAUNCH IF NO STOPS
         else{
@@ -408,8 +400,14 @@ $(document).ready(function(){
 
             console.log("Party Name: ", ajax_post['pname'],"Session ID: ", ajax_post['sid'])
         }
-
+    }
+    $('#sid-name').keypress(function(event){
+        if((event.keyCode ? event.keyCode : event.which) == '13')
+            startSession()
     })
+
+    $('#start-btn').on('click',startSession)
+
     $('#join-btn').click(function(){
         // Prompt for 6-digit unique key
         var sid = window.prompt("What is the party's unique 6 digit code?")
