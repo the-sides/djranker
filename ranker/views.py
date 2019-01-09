@@ -33,12 +33,7 @@ def ajax_refresh_ranklist(request,sid):
             
             # Find out how to check if tracks exist first!
             sesh_tracks = track.objects.all().filter(session_id=sid)
-            print(type(sesh_tracks))
-            # print(json.dumps(sesh_tracks))
-            # responce_data['song_requests'] = json.dumps(sesh_tracks[0])
             responce_data['song_requests'] = serializers.serialize("json",sesh_tracks)
-            # type(responce_data['song_requests'])
-            # print(responce_data['song_requests'])
 
             responce_data['result'] = True
         except Exception as error: responce_data['result'] = error
@@ -75,3 +70,31 @@ def ajax_post_token(request,sid):
         except Exception as error: responce_data['result'] = error
 
     return JsonResponse(responce_data)
+
+@require_POST
+def ajax_post_track(request,sid):
+    responce_data = {'result': False}
+    if request.method == "POST":
+        try:
+            print("=======================================")
+            # Yes, quite similar to ../djsite/views ajax_new_track_load but
+            #   I am not stringifying the json. Not sure if this is better
+            #   and would love feedback if anyone reviews/compares the two.
+
+            newTrack = track()
+            newTrack.session_id = sid 
+            newTrack.name = request.POST.get("name")
+            newTrack.uri = request.POST.get("uri") 
+            print("URI length of", newTrack.name, "n:", len(newTrack.uri))
+            newTrack.artist = request.POST.get("artist")
+            newTrack.album_img = request.POST.get("album_img")
+            print(newTrack)
+
+            newTrack.save()
+
+            responce_data['result'] = True
+        except Exception as error: print(error)
+
+    return JsonResponse(responce_data, safe=False)
+            
+    

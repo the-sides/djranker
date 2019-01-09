@@ -16,7 +16,7 @@ class session(models.Model):
 class track(models.Model):
     session_id= models.CharField(max_length=6, default="000000")
     name = models.CharField(max_length=64, default="Sandstorm")
-    uri = models.CharField(max_length=32, default="spotify:no_track")
+    uri = models.CharField(max_length=36, default="spotify:no_track")
     artist = models.CharField(max_length=32, default="Darude")
     album_img = models.CharField(max_length=64, default="no album")
     score = models.IntegerField(default="0")

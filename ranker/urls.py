@@ -8,6 +8,7 @@ urlpatterns = [
     path('list/ajax_refresh_ranklist/<str:sid>',views.ajax_refresh_ranklist),
     path('list/ajax_get_token/<str:sid>',views.ajax_get_token),
     path('list/ajax_post_token/<str:sid>',views.ajax_post_token),
+    path('list/ajax_post_track/<str:sid>', views.ajax_post_track),
 
 ]
 urlpatterns += staticfiles_urlpatterns()

@@ -21,22 +21,9 @@ function compare(a, b){
     return comparison
 }
 
-function LAMErefreshRanklist(sid){  //depreciated
-    $.ajax({
-        method: "GET",
-        url: 'ajax_refresh_ranklist/'+sid,
-        success : function(json){
-            console.log(json)
-            // rv = json['token']
-        },
-        error : function(xhr, errmsg, err,json){
-            console.log(xhr.status + ': ' + xhr.responseText)
-        }
-    })
-}
 
 // The function above BUT IT'S A FUCKING PROMISE NOW to stop XML warning.
-function refreshRanklist(sid){
+function refreshRanklistPromise(sid){
     return new Promise(function(resolve, reject){
         $.ajax({
             method: "GET",
@@ -51,6 +38,16 @@ function refreshRanklist(sid){
             }
         })
 
+    })
+}
+
+function updateRanklist(sid){
+    refreshRanklistPromise(sid).then(function(data){
+        // Ranklist refreshed
+        latestRanklist = data
+        displayRanklist(data)
+    }).catch(function(){
+        console.log("Error updating ranklist")
     })
 }
 
@@ -172,13 +169,12 @@ function searchRequest(){
 
             // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // authorizeVisitor();
-            getToken()
+            getToken(sid)
             
         }
         
     })
 }
-
 function saveResults(data){
     // I moved clearing the original results $(".result").remove() from here to displayResults init
     results = data;
@@ -267,10 +263,36 @@ function refreshPlaylistPlayback(){
     })
 }
 
+function addTrackToDB(trackInd){
+    let song = {}
+    song.name = results.tracks.items[trackInd].name;
+    song.uri = results.tracks.items[trackInd].uri
+    song.artist = results.tracks.items[trackInd].artists[0].name
+    song.album_img = results.tracks.items[trackInd].album.images[2].url
+    song.score = 0
+    console.log(song)
+    
+    $.ajax({
+        method: "POST",
+        url: "ajax_post_track/" + window.sid,
+        data: song,
+        success : function(res){
+            console.log("Track DB success", res)
+        },
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ': ' + xhr.responseText);   
+        }
+    })
+    return song
+
+}
+
 function displayRanklist(trackLoad){
+    
     trackLoad.sort(compare);
-    console.log("sorted",trackLoad)
-    console.log("Songs on ranklist", trackLoad.length)
+
+    // What exists? What should be moved?
+
     for(let i = 0; i < trackLoad.length; i++){
         let node = $("<div>", {"class" : "track-node"});
         // node.append($("<p>", {"class":"score"}).text("0"))
@@ -288,6 +310,10 @@ function displayRanklist(trackLoad){
         node.append(vote_panel)
         $("#ranklist-body").append(node)
     }
+
+    // Log
+    console.log("sorted",trackLoad)
+    console.log("Songs on ranklist", trackLoad.length)
 
     //=======================================================
     //            SERVER SIDE PROCESS
@@ -326,7 +352,7 @@ $(document).ready(function(session){
 
     authorizeVisitor()
     // =================== UPDATE RANKLIST =========================//
-    refreshRanklist(sid).then(function(data){
+    refreshRanklistPromise(sid).then(function(data){
         if(data.length == 0){ 
             $('#ranklist-body').text("Ranklist will start once request have been made")
             return
@@ -349,50 +375,26 @@ $(document).ready(function(session){
     //Used once a request is submitted
     $('#drop-results').on('click','.result',function(){
         let resultIndex = $(this).attr("id").substr(-1)
+        let trackLoad = []
         console.log("Request track index:",resultIndex)
         console.log(results.tracks.items[resultIndex].name)
+
+        trackLoad.push({'fields':
+            addTrackToDB(resultIndex)})
         addTrackToPlaylist(results.tracks.items[resultIndex].uri)
         // Hacky work around. The user needs to be playing from the new 
         //   snapshot. Analyze and play user within the same context. 
-        refreshPlaylistPlayback()
-        refreshPlaylistPlayback()
+
+        // refreshPlaylistPlayback()
+        // updateRanklist(window.sid)
+        displayRanklist(trackLoad)
         hideResults();
-        console.log("Requests hidden")
     })
     
     // Used to hide results from a search       WHAT? NOT DONE? I THOUGHT IT WORKED
     // $('#hide-results').click()
-    //Research JS scopes on global variables. By-reference or by-value? Passing parameters or otherwise?
 
-
-
-    $('#authorize').click(function(session){
-        // sid = authorizeVisitor(sid)
-        // $.ajax({
-        //     // I'm not sure if this should be done with a curl call
-        // })
-        // var codeInd = window.location.href.indexOf("=")
-        // var codeEndInd = window.location.href.indexOf("&",codeInd)
-        // var token = window.location.href.substring(codeInd+1,codeEndInd)
-        // saveToken(token,session)
-        // console.log(session.token)
-
-        authorizeVisitor()
-        // window.token = getToken(sid)
-    })
-
-    $('#start-session').click(function(session){
-        // if(token == ""){
-        //     window.alert("COME BACK WHEN YOU AUTHORIZE YOUR ACCOUNT");
-        // }
-        // else{
-            // Ask base playlist or blank
-            // BLANK
-            // sessionID = Math.random().toString(36).replace('0.','').substring(0,6)
-            window.alert(session.token)
-        // }
-
-    })
+    $('#authorize').click(authorizeVisitor)
 
     // Search Functionality
     $('#search-btn').click(searchRequest)
@@ -434,11 +436,13 @@ $(document).ready(function(session){
             // Verify that only one vote-btn is pressed
             if($(this).siblings().val() == "true"){
                 $(this).siblings().val(false).removeAttr("style");
+                // updateScore()
             }
             $(this).val(true).css("background-color","rgba(255, 98, 25, 0.748)");
         }
         else{
             $(this).val(false).removeAttr("style");
+
         }
     })
 })

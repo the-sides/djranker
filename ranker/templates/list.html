@@ -9,6 +9,12 @@
         <script src="{% static 'ranker/js/ranklist.js' %}"></script>
         <!-- <link rel="stylesheet" href="{% static 'ranker/css/materialize.css' %}"/> -->
         <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet"> 
+        
+        {% csrf_token %}
+        <script type="text/javascript">
+        // using jQuery
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        </script>
     </head>
     <body>
         <div id="header-container">
