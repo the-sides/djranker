@@ -44,7 +44,7 @@ function refreshRanklistPromise(sid){
 function updateRanklist(sid){
     refreshRanklistPromise(sid).then(function(data){
         // Ranklist refreshed
-        latestRanklist = data
+        currentRanklist = data
         displayRanklist(data)
     }).catch(function(){
         console.log("Error updating ranklist")
@@ -160,31 +160,27 @@ function searchRequest(){
         },
         success : function(json){
             console.log("Search returned")
-            saveResults(json)
-            displayResults(results)
+            searchResults = json
+            displayResults(json)
         },
         error : function(xhr, errmsg, err) { 
             console.log(xhr.status + ': ' + xhr.responseText);   
                 // AUTHORIZE WITH VISITOR FOR NEW SEARCH TOKEN 
 
             // REFER TO ISSUE #6   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // authorizeVisitor();
-            getToken(sid)
+            authorizeVisitor();
+            // getToken(sid)
             
         }
         
     })
-}
-function saveResults(data){
-    // I moved clearing the original results $(".result").remove() from here to displayResults init
-    results = data;
 }
 
 function hideResults(){
     $("#drop-results").css("display","none")
 }
 
-function displayResults(){
+function displayResults(results){
     // Remove existing search items
     $(".result").remove();  // Existing search items
 
@@ -265,16 +261,17 @@ function refreshPlaylistPlayback(){
 
 function addTrackToDB(trackInd){
     let song = {}
-    song.name = results.tracks.items[trackInd].name;
-    song.uri = results.tracks.items[trackInd].uri
-    song.artist = results.tracks.items[trackInd].artists[0].name
-    song.album_img = results.tracks.items[trackInd].album.images[2].url
+    song.sid = sid // Global value. If fail, try window.sid; Research window vars
+    song.name = searchResults.tracks.items[trackInd].name;
+    song.uri = searchResults.tracks.items[trackInd].uri
+    song.artist = searchResults.tracks.items[trackInd].artists[0].name
+    song.album_img = searchResults.tracks.items[trackInd].album.images[2].url
     song.score = 0
     console.log(song)
     
     $.ajax({
         method: "POST",
-        url: "ajax_post_track/" + window.sid,
+        url: "ajax_post_track/",
         data: song,
         success : function(res){
             console.log("Track DB success", res)
@@ -342,8 +339,8 @@ function updateScore(track, vote){
 //===============  GLOBALS  ===============//
 var sid = window.location.href.substr(-6)
 window.token = getToken(sid);
-var results = {};
-var latestRanklist = {};
+var searchResults = {};
+var currentRanklist = {};
 
 //===========  RUNTIME EVENTS =============//
 $(document).ready(function(session){ 
@@ -357,13 +354,13 @@ $(document).ready(function(session){
             $('#ranklist-body').text("Ranklist will start once request have been made")
             return
         }
-        latestRanklist = data;
-        console.log(latestRanklist)
-        displayRanklist(latestRanklist)
+        currentRanklist = data;
+        console.log(currentRanklist)
+        displayRanklist(currentRanklist)
     }).catch(function(){
         $('#ranklist-body').text("Ranklist was not found")
     })
-    console.log("Ranklist:\n",latestRanklist)
+    console.log("Ranklist:\n",currentRanklist)
    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^// 
 
    
@@ -377,11 +374,17 @@ $(document).ready(function(session){
         let resultIndex = $(this).attr("id").substr(-1)
         let trackLoad = []
         console.log("Request track index:",resultIndex)
-        console.log(results.tracks.items[resultIndex].name)
+        console.log(searchResults.tracks.items[resultIndex].name)
+
+        for(let i = 0; i < currentRanklist.length; i++){
+            if(currentRanklist[i].uri == searchResults.tracks.items[resultIndex].uri){
+                window.alert("This song is already on ranklist or was played earlier")
+            }
+        }
 
         trackLoad.push({'fields':
             addTrackToDB(resultIndex)})
-        addTrackToPlaylist(results.tracks.items[resultIndex].uri)
+        addTrackToPlaylist(searchResults.tracks.items[resultIndex].uri)
         // Hacky work around. The user needs to be playing from the new 
         //   snapshot. Analyze and play user within the same context. 
 

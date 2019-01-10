@@ -72,7 +72,7 @@ def ajax_post_token(request,sid):
     return JsonResponse(responce_data)
 
 @require_POST
-def ajax_post_track(request,sid):
+def ajax_post_track(request):
     responce_data = {'result': False}
     if request.method == "POST":
         try:
@@ -82,7 +82,7 @@ def ajax_post_track(request,sid):
             #   and would love feedback if anyone reviews/compares the two.
 
             newTrack = track()
-            newTrack.session_id = sid 
+            newTrack.session_id = request.POST.get("sid")
             newTrack.name = request.POST.get("name")
             newTrack.uri = request.POST.get("uri") 
             print("URI length of", newTrack.name, "n:", len(newTrack.uri))
@@ -96,5 +96,17 @@ def ajax_post_track(request,sid):
         except Exception as error: print(error)
 
     return JsonResponse(responce_data, safe=False)
-            
+
+@require_POST
+def ajax_vote(request):
+    responce_data = {'result': False}
+    if request.method == POST:
+        try:
+            # True = +1 False = -1
+            sid = request.POST.get("sid")
+            uri = request.POST.get("uri")
+            vote = request.POST.get("vote")
+        except Exception as error: print(error)
+    return JsonResponse(newScore)
+
     
