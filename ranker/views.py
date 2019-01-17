@@ -99,7 +99,8 @@ def ajax_post_track(request):
 
 @require_POST
 def ajax_vote(request):
-    responce_data = {'result': False}
+    responce_data = {'result': False,
+                     'newScore': 0}
     if request.method == POST:
         try:
             # True = +1 False = -1
@@ -107,6 +108,6 @@ def ajax_vote(request):
             uri = request.POST.get("uri")
             vote = request.POST.get("vote")
         except Exception as error: print(error)
-    return JsonResponse(newScore)
+    return JsonResponse(responce_data)
 
     

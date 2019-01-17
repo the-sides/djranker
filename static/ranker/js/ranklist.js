@@ -58,7 +58,7 @@ function updateRanklist(sid){
 //                             that or find permanent authorization
 function authorizeVisitor(){
     var token;
-    let scopes = [
+    const scopes = [
             'user-modify-playback-state',
             'playlist-read-private',
             'playlist-modify-public',
@@ -67,7 +67,11 @@ function authorizeVisitor(){
             'user-modify-playback-state',
             'user-read-playback-state'
         ];
-    popup = window.open("https://accounts.spotify.com/authorize?client_id=757af020a2284508af07dea8b2c61301&redirect_uri=http://localhost:8000/authenticate" + "&scope=" + scopes.join('%20') + "&response_type=token&state=123", "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
+    popup = window.open("https://accounts.spotify.com/authorize?"
+    +"client_id=757af020a2284508af07dea8b2c61301&"
+    +"redirect_uri=http://localhost:8000/authenticate" 
+    + "&scope=" + scopes.join('%20') + "&response_type=token&state=123"
+    , "popup",'toolbar = no, status = no beforeShow, width=400, height=800')
     // popup = window.open("http://localhost:8000/authenticate")
     function receiveMessage(event){
         console.log(event.data);
@@ -145,7 +149,13 @@ function spotifyCallToken(type,value){
 
 // Search AJAX call
 function searchRequest(){
-    searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
+    let searchStr = $('#search-str').val().replace(/ /g, "%20")//split(' ').join('%20')
+    
+    // Empty Error Check
+    if(searchStr == ""){
+        return
+    }
+
     console.log("New search for ", searchStr);
     URL = "https://api.spotify.com/v1/search?q=" + searchStr + "&type=track&market=US&limit=10"
     console.log(URL)
@@ -300,7 +310,7 @@ function displayRanklist(trackLoad){
         desc.append($("<br>"))
         desc.append($("<span>"/*, {"class": "desc"}*/).text(trackLoad[i].fields.artist))
         node.append(desc)
-        node.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score))
+        node.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score).val(trackLoad[i].fields.uri))
         let vote_panel = $("<div>", {"class":"vote-panel"})
         vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("+").val(false))
         vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("-").val(false))
@@ -322,17 +332,19 @@ function manipulateSpotify(tracks){
     // Pull current list
     // Check for any adds 
     // Reposition tracks
-
-
 }
 
 function updateScore(track, vote){
-    if(vote == 1){ // Upvote
 
-    }
-    else{          // Downvote
-        
-    }
+    let base = Number(track.text())
+        track.text(base+vote)
+
+    // Refreshing popup
+    // Nah, I'm begging from websockets
+    rankSocket.send(JSON.stringify({
+        'type': 'vote',
+        'track':track.val()
+    }))
 
 }
 
@@ -341,6 +353,21 @@ var sid = window.location.href.substr(-6)
 window.token = getToken(sid);
 var searchResults = {};
 var currentRanklist = {};
+///--------------------------------------
+//               WEBSOCKET
+//_______________________________________
+var rankSocket = new WebSocket(
+    'ws://' + window.location.host + 
+    '/ws/list/' + sid + '/'
+    );
+
+rankSocket.onmessage = function(event){
+    console.log("The vote changed to")
+    console.log(event.data)
+}
+rankSocket.onclose = function(event){
+    console.error("Websocket is down")
+}
 
 //===========  RUNTIME EVENTS =============//
 $(document).ready(function(session){ 
@@ -362,8 +389,6 @@ $(document).ready(function(session){
     })
     console.log("Ranklist:\n",currentRanklist)
    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^// 
-
-   
     // Results are accessable globally
     // Search process functions
 
@@ -404,7 +429,8 @@ $(document).ready(function(session){
 
     // ~~Enter~~ ANY button within search bar searches. Duh.
     $('#search-str').keypress(function(event){
-            searchRequest();
+        if((event.keyCode ? event.keyCode : event.which) == '13')
+        if(event.keyCode) searchRequest();
     })
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -434,18 +460,32 @@ $(document).ready(function(session){
     $('#ranklist-body').on('click','.vote-btn',function(){
         // Check cookie for what's already been voted on.
         //   More needs to go into cookies to save long term
-        // window.cookie = {"foo":"bar"}
-        if($(this).val() == "false"){
-            // Verify that only one vote-btn is pressed
-            if($(this).siblings().val() == "true"){
-                $(this).siblings().val(false).removeAttr("style");
-                // updateScore()
-            }
-            $(this).val(true).css("background-color","rgba(255, 98, 25, 0.748)");
-        }
-        else{
-            $(this).val(false).removeAttr("style");
+        let vote = 0
 
+        // Vote Direction
+        if($(this).text() == '+') vote += 1
+        else                      vote -= 1
+        
+        // Vote magnitude and button update
+        if($(this).val() !== $(this).siblings().val()){
+            // If the button was already pressed, negate
+            if($(this).val() == "true"){
+                vote *= -1
+                $(this).val("false").removeAttr("style");
+            }
+
+            // Verify that only one vote-btn is pressed
+            else{
+                vote *= 2 // The effect of the flick doubles in direction
+                $(this).val("true").css("background-color","rgba(255, 98, 25, 0.748)");
+                $(this).siblings().val(false).removeAttr("style");
+            }
         }
+        else if($(this).val() == "false"){
+            $(this).val("true").css("background-color","rgba(255, 98, 25, 0.748)");
+        }
+
+        updateScore($(this).parent().prev(".score"),vote)
+
     })
 })

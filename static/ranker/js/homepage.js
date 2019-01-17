@@ -26,7 +26,7 @@ function getToken(){
 }
 
 function authorizeHost(offset){
-    var scopes = [
+    const scopes = [
             'playlist-read-private',
             'playlist-modify-public',
             'playlist-read-collaborative',
