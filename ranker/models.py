@@ -22,4 +22,4 @@ class track(models.Model):
     score = models.IntegerField(default="0")
     
     def __str__(self):
-        return self.session_id + " | " + self.name
+        return self.name + " | " + self.session_id

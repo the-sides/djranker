@@ -26,24 +26,34 @@ class RanklistConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
 
-    def disconnect(self, close_code):
-        pass
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.sid, 
+            self.channel_name
+        )
 
     async def receive(self, text_data):
         # Seperate by votes and requests
         data = json.loads(text_data)
         req_type = data['type']
         print("Received",req_type)
-        # if req_type == 'vote':
+        if req_type == 'vote':
             # use modules to calculate new rank
+            changedTrack = track()
+            changedTrack = track.objects.get(session_id=self.sid, uri=data['track'])
+            changedTrack.score = changedTrack.score + data['voteValue']
+            changedTrack.save()
+            print(changedTrack)
+
         await self.channel_layer.group_send(
             self.sid,
             {
                 "type":"group.message",
-                "message": data['track']
+                "track": data['track'], 
+                "newScore": changedTrack.score
             }
         )
 
     async def group_message(self, event):
         print("Vote_change FROM GROUP_MESSAGE!", self.client_name)
-        await self.send(text_data=event['message'])
+        await self.send(text_data=json.dumps(event))

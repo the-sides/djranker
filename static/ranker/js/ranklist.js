@@ -71,7 +71,7 @@ function authorizeVisitor(){
     +"client_id=757af020a2284508af07dea8b2c61301&"
     +"redirect_uri=http://localhost:8000/authenticate" 
     + "&scope=" + scopes.join('%20') + "&response_type=token&state=123"
-    , "popup",'toolbar = no, status = no beforeShow, width=400, height=800')
+    , "popup",'toolbar = no, status = no beforeShow, width=200, height=200')
     // popup = window.open("http://localhost:8000/authenticate")
     function receiveMessage(event){
         console.log(event.data);
@@ -310,7 +310,7 @@ function displayRanklist(trackLoad){
         desc.append($("<br>"))
         desc.append($("<span>"/*, {"class": "desc"}*/).text(trackLoad[i].fields.artist))
         node.append(desc)
-        node.append($("<div>", {"class":"score"}).text(trackLoad[i].fields.score).val(trackLoad[i].fields.uri))
+        node.append($("<div>", {"class":"score", "id":trackLoad[i].fields.uri}).text(trackLoad[i].fields.score).val(trackLoad[i].fields.uri))
         let vote_panel = $("<div>", {"class":"vote-panel"})
         vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("+").val(false))
         vote_panel.append($("<button>", {"class":"vote-btn node-item"}).text("-").val(false))
@@ -337,13 +337,13 @@ function manipulateSpotify(tracks){
 function updateScore(track, vote){
 
     let base = Number(track.text())
-        track.text(base+vote)
 
-    // Refreshing popup
-    // Nah, I'm begging from websockets
+    track.text(base+vote)
+
     rankSocket.send(JSON.stringify({
         'type': 'vote',
-        'track':track.val()
+        'track':track.val(),
+        'voteValue': vote
     }))
 
 }
@@ -362,9 +362,18 @@ var rankSocket = new WebSocket(
     );
 
 rankSocket.onmessage = function(event){
+    data = JSON.parse(event.data)
     console.log("The vote changed to")
-    console.log(event.data)
+    console.log("From DOM", document.getElementById(data.track).innerText)
+    // Find track
+    // Change Score
+    document.getElementById(data.track).innerText = data.newScore
+    // Move ranklist
+
+    // Connection Check
+    // If result hasn't been recieved after same client sent, then report bad transmit error
 }
+
 rankSocket.onclose = function(event){
     console.error("Websocket is down")
 }
