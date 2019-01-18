@@ -300,6 +300,7 @@ function displayRanklist(trackLoad){
 
     // What exists? What should be moved?
 
+    // reorder is dependant on .score being the 3rd children. Plz refactor if changing. 
     for(let i = 0; i < trackLoad.length; i++){
         let node = $("<div>", {"class" : "track-node"});
         // node.append($("<p>", {"class":"score"}).text("0"))
@@ -332,6 +333,44 @@ function manipulateSpotify(tracks){
     // Pull current list
     // Check for any adds 
     // Reposition tracks
+}
+function reorderRanklist(){
+    // Whewy, okay this is a big one. Will go through the #ranklist-body and sort based on new results (votes and new requests)
+    // As far as sorting, I'll go for insertion sort for now since it will likely be one results out of place.
+    // A good implementation in the future would be quick sort.
+
+    // Traverse Ranklist body, consider dynamically added nodes from jquery
+    let ranklistNodes = document.getElementsByClassName("track-node")
+    let ranklistBody = document.getElementById('ranklist-body')
+
+    // Make object with position indice and score to sort
+    let posObj = []
+    for(let i = 0; i < ranklistNodes.length; i++){
+        posObj.push({'pos':i,"score":ranklistNodes[i].children[2].innerText})
+    }
+
+    // Sort object of indices and positions
+    posObj.sort(function(a,b){
+        return b.score - a.score
+    })
+    console.log(posObj)
+
+    // Use sorted object to manipulate out of play nodes. 
+    for(let i = 0; i < ranklistNodes.length; i++){
+        if(posObj[i].pos !== i){
+            ranklistBody.insertBefore(
+                ranklistNodes[posObj[i].pos], // The track we want to move
+                ranklistNodes[i+1])      // Behind the node where is should be
+        } 
+    }
+
+    return true
+}
+
+// Depreciated, used for debugging
+function swapTrackNodes(i, j){
+    ranklistNodes = document.getElementsByClassName("track-node")
+    return document.getElementById("ranklist-body").insertBefore(ranklistNodes[i],ranklistNodes[j])
 }
 
 function updateScore(track, vote){
@@ -369,7 +408,7 @@ rankSocket.onmessage = function(event){
     // Change Score
     document.getElementById(data.track).innerText = data.newScore
     // Move ranklist
-
+    reorderRanklist()
     // Connection Check
     // If result hasn't been recieved after same client sent, then report bad transmit error
 }
