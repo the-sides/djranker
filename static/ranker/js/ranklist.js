@@ -20,6 +20,10 @@ function ajaxHeaderToken(token){
         }
     })
 }
+function ajaxErrorCallback(xhr){
+    console.log(xhr.status + ': ' + xhr.responseText);   
+}
+
 function compare(a, b){
     const scoreA = a.fields.score
     const scoreB = b.fields.score
@@ -128,9 +132,7 @@ function postToken(sid, token){
         success : function(json){
             console.log("Ajax post sucessoooo")
         },
-        error : function(xhr, errmsg, err,json){
-            console.log(xhr.status + ': ' + xhr.responseText)
-        }
+        error : ajaxErrorCallback
     })
 }
 
@@ -245,9 +247,7 @@ function addTrackToPlaylist(trackUri){
         success : function(responce){
             console.log(responce)
         },
-        error : function(xhr, errmsg, err) { 
-            console.log(xhr.status + ': ' + xhr.responseText);   
-        }
+        error : ajaxErrorCallback
     })
     return true
 }
@@ -275,9 +275,7 @@ function refreshPlaylistPlayback(){
         success: function(res){
             console.log("We think it worked", res)
         },
-        error : function(xhr, errmsg, err) { 
-            console.log(xhr.status + ': ' + xhr.responseText);   
-        }
+        error : ajaxErrorCallback
     })
 }
 
@@ -298,9 +296,7 @@ function addTrackToDB(trackInd){
         success : function(res){
             console.log("Track DB success", res)
         },
-        error : function(xhr, errmsg, err) { 
-            console.log(xhr.status + ': ' + xhr.responseText);   
-        }
+        error : ajaxErrorCallback
     })
     return song
 
@@ -341,20 +337,19 @@ function displayRanklist(trackLoad){
     // manipulateSpotify(trackLoad)
 }
 
-function currentlyPlaying(){
+function ajaxCurrentlyPlaying(){
     // Pull spotify playback info
     $.ajax({
         method: "GET",
         url: "https://api.spotify.com/v1/me/player/currently-playing",
-        success : function(jsonData){
-            console.log("Song playing", jsonData)
-        },
-        error : function(xhr, errmsg, err) { 
-            console.log(xhr.status + ': ' + xhr.responseText, errmsg, xhr);   
-        }
+        success : renderCurrentlyPlaying,
+        error : ajaxErrorCallback
     })
     // Render DOM elements
     return true
+}
+function renderCurrentlyPlaying(json){
+    console.log(json)
 }
 
 function manipulateSpotify(tracks){
