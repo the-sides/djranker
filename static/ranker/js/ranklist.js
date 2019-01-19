@@ -10,7 +10,16 @@ $.ajaxSetup({
         }
     }
 }); 
-
+function ajaxHeaderToken(token){
+    $.ajaxSetup({
+        headers: {
+            'Accept': 'application/json' ,
+            'Content-Type': 'application/json',
+            // Token will depend on the user hosting
+            'Authorization': 'Bearer '+ token
+        }
+    })
+}
 function compare(a, b){
     const scoreA = a.fields.score
     const scoreB = b.fields.score
@@ -76,6 +85,7 @@ function authorizeVisitor(){
     function receiveMessage(event){
         console.log(event.data);
         window.token = event.data;
+        ajaxHeaderToken(event.data)
         popup.close()
         // searchRequest();
         // Boom, we have a token, post to DB? Or use for local session
@@ -89,12 +99,14 @@ function getToken(sid){
     // use token in spotify call and catch the new one
     // POST new!!!! latest token into db for next call
     //    THIS TRANSACTION MUST HAPPEN
+    if(sid === undefined) return window.token
     $.ajax({
         method: "GET",
         url: 'ajax_get_token/' + sid,
         success : function(json){
             console.log("Ajax get token successooooo", json.token)
             window.token = json.token
+            ajaxHeaderToken(json.token)
             return json.token;
         },
         error : function(xhr, errmsg, err,json){
@@ -162,12 +174,12 @@ function searchRequest(){
     $.ajax({
         method: "GET",
         url: URL ,
-        headers: {
-            'Accept': 'application/json' ,
-            'Content-Type': 'application/json',
-            // Token will depend on the user hosting
-            'Authorization': 'Bearer '+ window.token
-        },
+        // headers: {
+        //     'Accept': 'application/json' ,
+        //     'Content-Type': 'application/json',
+        //     // Token will depend on the user hosting
+        //     'Authorization': 'Bearer '+ window.token
+        // },
         success : function(json){
             console.log("Search returned")
             searchResults = json
@@ -224,12 +236,12 @@ function addTrackToPlaylist(trackUri){
             +$("#pid-render").text()
             +"/tracks?uris="
             +trackUri,
-        headers: {
-            'Accept': 'application/json' ,
-            'Content-Type': 'application/json',
-            // Token will depend on the user hosting
-            'Authorization': 'Bearer '+ window.token
-        },
+        // headers: {
+        //     'Accept': 'application/json' ,
+        //     'Content-Type': 'application/json',
+        //     // Token will depend on the user hosting
+        //     'Authorization': 'Bearer '+ window.token
+        // },
         success : function(responce){
             console.log(responce)
         },
@@ -254,11 +266,11 @@ function refreshPlaylistPlayback(){
     $.ajax({
         method: "PUT",
         url: "https://api.spotify.com/v1/me/player/play",
-        headers: {
-            'Accept': 'application/json' ,
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+ window.token
-        },
+        // headers: {
+        //     'Accept': 'application/json' ,
+        //     'Content-Type': 'application/json',
+        //     'Authorization': 'Bearer '+ window.token
+        // },
         data: JSON.stringify(ajax_data),
         success: function(res){
             console.log("We think it worked", res)
@@ -327,6 +339,22 @@ function displayRanklist(trackLoad){
     //            SERVER SIDE PROCESS
     // ---    ---    ---   --   ---    ---    ---   ---   ---
     // manipulateSpotify(trackLoad)
+}
+
+function currentlyPlaying(){
+    // Pull spotify playback info
+    $.ajax({
+        method: "GET",
+        url: "https://api.spotify.com/v1/me/player/currently-playing",
+        success : function(jsonData){
+            console.log("Song playing", jsonData)
+        },
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ': ' + xhr.responseText, errmsg, xhr);   
+        }
+    })
+    // Render DOM elements
+    return true
 }
 
 function manipulateSpotify(tracks){
