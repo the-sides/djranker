@@ -6,6 +6,7 @@ from django.core import serializers
 import json
 
 from ranker.models import *
+from .tasks import demo_task
 
 
 # Create your views here.
@@ -97,17 +98,5 @@ def ajax_post_track(request):
 
     return JsonResponse(responce_data, safe=False)
 
-@require_POST
-def ajax_vote(request):
-    responce_data = {'result': False,
-                     'newScore': 0}
-    if request.method == POST:
-        try:
-            # True = +1 False = -1
-            sid = request.POST.get("sid")
-            uri = request.POST.get("uri")
-            vote = request.POST.get("vote")
-        except Exception as error: print(error)
-    return JsonResponse(responce_data)
 
     
